@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
     app:startDestination="@id/splashFragment">
 
@@ -29,7 +30,11 @@
             app:popUpTo="@id/splashFragment"
             app:popUpToInclusive="true" />
     </fragment>
-
+    <fragment
+        android:id="@+id/cartFragment"
+        android:name="com.example.namnyam.ui.cart.CartFragment"
+        android:label="Корзина"
+        tools:layout="@layout/fragment_cart" />
     <fragment
         android:id="@+id/loginFragment"
         android:name="com.example.namnyam.ui.auth.login.LoginFragment"
@@ -95,6 +100,7 @@
         android:id="@+id/restaurantDetailsFragment"
         android:name="com.example.namnyam.ui.client.RestaurantDetailsFragment"
         android:label="RestaurantDetails">
+
 
         <action
             android:id="@+id/action_restaurantDetailsFragment_to_cartFragment"
