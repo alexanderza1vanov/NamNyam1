@@ -30,11 +30,7 @@
             app:popUpTo="@id/splashFragment"
             app:popUpToInclusive="true" />
     </fragment>
-    <fragment
-        android:id="@+id/cartFragment"
-        android:name="com.example.namnyam.ui.cart.CartFragment"
-        android:label="Корзина"
-        tools:layout="@layout/fragment_cart" />
+
     <fragment
         android:id="@+id/loginFragment"
         android:name="com.example.namnyam.ui.auth.login.LoginFragment"

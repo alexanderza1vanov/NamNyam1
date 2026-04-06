@@ -1,4 +1,4 @@
-package com.example.namnyam.ui.client
+package com.example.namnyam.ui.cart
 
 import android.os.Bundle
 import android.view.View
@@ -9,6 +9,9 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.namnyam.R
 import com.example.namnyam.databinding.FragmentCartBinding
+import com.example.namnyam.ui.client.CartAdapter
+import com.example.namnyam.ui.client.CartItemUi
+import com.example.namnyam.ui.client.CartStore
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 class CartFragment : Fragment(R.layout.fragment_cart) {

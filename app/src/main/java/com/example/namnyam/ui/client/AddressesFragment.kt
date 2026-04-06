@@ -11,7 +11,7 @@ import com.example.namnyam.R
 import com.example.namnyam.databinding.FragmentAddressesBinding
 import com.example.namnyam.utils.UiState
 
-class AdressesFragment : Fragment(R.layout.fragment_addresses) {
+class AddressesFragment : Fragment(R.layout.fragment_addresses) {
 
     private var _binding: FragmentAddressesBinding? = null
     private val binding get() = _binding!!
