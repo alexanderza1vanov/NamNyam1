@@ -39,8 +39,8 @@ class CartAdapter(
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: CartItemUi) {
-            binding.tvProductName.text = item.productName
-            binding.tvProductPrice.text = "${item.productPrice.toInt()} ₽"
+            binding.tvProductName.text = item.name
+            binding.tvProductPrice.text = "${item.price.toInt()} ₽"
             binding.tvQuantity.text = item.quantity.toString()
             binding.tvItemTotal.text = "${item.totalPrice.toInt()} ₽"
 

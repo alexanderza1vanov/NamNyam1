@@ -12,7 +12,7 @@ class AdressesViewModelFactory(
 
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        val api = RetrofitProvider.namNyamApi
+        val api = RetrofitProvider.getApi(context)
         return AdressesViewModel(AddressRepository(api)) as T
     }
 }

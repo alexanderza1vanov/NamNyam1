@@ -4,13 +4,16 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.namnyam.data.remote.dto.OrderDto
+import com.example.namnyam.data.remote.network.RetrofitProvider
 import com.example.namnyam.data.repository.OrderRepository
 import com.example.namnyam.utils.UiState
 import kotlinx.coroutines.launch
 
 class OrderDetailsViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val orderRepository = OrderRepository(application)
+    private val orderRepository = OrderRepository(
+        RetrofitProvider.getApi(application)
+    )
 
     var state: ((UiState<OrderDto>) -> Unit)? = null
 
@@ -19,8 +22,18 @@ class OrderDetailsViewModel(application: Application) : AndroidViewModel(applica
 
         viewModelScope.launch {
             try {
-                val order = orderRepository.getOrderById(orderId)
-                state?.invoke(UiState.Success(order))
+                val result = orderRepository.getOrderById(orderId)
+
+                result
+                    .onSuccess { order ->
+                        state?.invoke(UiState.Success(order))
+                    }
+                    .onFailure { e ->
+                        state?.invoke(
+                            UiState.Error(e.message ?: "Не удалось загрузить заказ")
+                        )
+                    }
+
             } catch (e: Exception) {
                 state?.invoke(
                     UiState.Error(e.message ?: "Не удалось загрузить заказ")

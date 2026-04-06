@@ -4,13 +4,16 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.namnyam.data.remote.dto.OrderDto
+import com.example.namnyam.data.remote.network.RetrofitProvider
 import com.example.namnyam.data.repository.OrderRepository
 import com.example.namnyam.utils.UiState
 import kotlinx.coroutines.launch
 
 class OrdersHistoryViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val orderRepository = OrderRepository(application)
+    private val orderRepository = OrderRepository(
+        RetrofitProvider.getApi(application)
+    )
 
     var state: ((UiState<List<OrderDto>>) -> Unit)? = null
 
@@ -19,10 +22,21 @@ class OrdersHistoryViewModel(application: Application) : AndroidViewModel(applic
 
         viewModelScope.launch {
             try {
-                val orders = orderRepository.getMyOrders()
-                    .sortedByDescending { it.id }
+                val result = orderRepository.getMyOrders()
 
-                state?.invoke(UiState.Success(orders))
+                result
+                    .onSuccess { orders ->
+                        val sortedOrders = orders.sortedByDescending { order ->
+                            order.id
+                        }
+                        state?.invoke(UiState.Success(sortedOrders))
+                    }
+                    .onFailure { e ->
+                        state?.invoke(
+                            UiState.Error(e.message ?: "Не удалось загрузить историю заказов")
+                        )
+                    }
+
             } catch (e: Exception) {
                 state?.invoke(
                     UiState.Error(e.message ?: "Не удалось загрузить историю заказов")

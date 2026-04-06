@@ -40,19 +40,19 @@ interface NamNyamApi {
     ): List<ProductDto>
 
     // Addresses
-    @GET("addresses")
-    suspend fun getAddresses(): List<AddressDto>
-
-    @POST("addresses")
-    suspend fun createAddress(
-        @Body body: CreateAddressRequestDto
-    ): AddressDto
+//    @GET("addresses")
+//    suspend fun getAddresses(): List<AddressDto>
+//
+//    @POST("addresses")
+//    suspend fun createAddress(
+//        @Body body: CreateAddressRequestDto
+//    ): AddressDto
 
     // Orders
-    @POST("orders")
-    suspend fun createOrder(
-        @Body body: CreateOrderRequestDto
-    ): OrderDto
+//    @POST("orders")
+//    suspend fun createOrder(
+//        @Body body: CreateOrderRequestDto
+//    ): OrderDto
 
     @GET("orders/my")
     suspend fun getMyOrders(): List<OrderDto>
@@ -63,12 +63,12 @@ interface NamNyamApi {
     ): OrderDto
 
     // Owner
-    @GET("owner/orders")
-    suspend fun getOwnerOrders(): List<OrderDto>
-
-    // Courier
-    @GET("courier/orders")
-    suspend fun getCourierOrders(): List<OrderDto>
+//    @GET("owner/orders")
+//    suspend fun getOwnerOrders(): List<OrderDto>
+//
+//    // Courier
+//    @GET("courier/orders")
+//    suspend fun getCourierOrders(): List<OrderDto>
 
     @GET("addresses/my")
     suspend fun getMyAddresses(): List<DeliveryAddressDto>

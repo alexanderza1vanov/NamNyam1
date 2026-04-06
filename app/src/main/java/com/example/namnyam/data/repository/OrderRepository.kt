@@ -17,4 +17,19 @@ class OrderRepository(
             Result.failure(e)
         }
     }
+    suspend fun getMyOrders(): Result<List<OrderDto>> {
+        return try {
+            Result.success(api.getMyOrders())
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun getOrderById(orderId: Long): Result<OrderDto> {
+        return try {
+            Result.success(api.getOrderById(orderId))
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 }

@@ -103,7 +103,7 @@ class CartFragment : Fragment(R.layout.fragment_cart) {
     private fun confirmDelete(item: CartItemUi) {
         MaterialAlertDialogBuilder(requireContext())
             .setTitle("Удалить товар?")
-            .setMessage("Удалить \"${item.productName}\" из корзины?")
+            .setMessage("Удалить \"${item.name}\" из корзины?")
             .setNegativeButton("Отмена", null)
             .setPositiveButton("Удалить") { _, _ ->
                 deleteItem(item)

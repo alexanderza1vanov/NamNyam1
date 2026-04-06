@@ -39,7 +39,7 @@ class AddAddressFragment : Fragment(R.layout.fragment_add_address) {
     }
 
     private fun observeState() {
-        viewModel.state = { state ->
+        viewModel.state.observe(viewLifecycleOwner) { state ->
             when (state) {
                 is UiState.Idle -> Unit
 

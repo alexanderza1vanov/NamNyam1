@@ -10,7 +10,7 @@ import com.example.namnyam.data.repository.AddressRepository
 import com.example.namnyam.utils.UiState
 import kotlinx.coroutines.launch
 
-class AddAdressViewModel(
+class AddAddressViewModel(
     private val repository: AddressRepository
 ) : ViewModel() {
 
