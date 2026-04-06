@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.namnyam.R
+import com.example.namnyam.data.cart.CartItem
 import com.example.namnyam.data.cart.CartManager
 import com.example.namnyam.data.remote.dto.ProductDto
 import com.example.namnyam.databinding.FragmentRestaurantDetailsBinding
@@ -81,11 +82,14 @@ class RestaurantDetailsFragment : Fragment(R.layout.fragment_restaurant_details)
                     binding.tvEmpty.visibility = View.GONE
                 }
 
-                is UiState.Success -> {
-                    binding.progressBar.visibility = View.GONE
-                    adapter.submitList(state.data)
+                is UiState.Success<*> -> {
+                    @Suppress("UNCHECKED_CAST")
+                    val products = state.data as List<ProductDto>
 
-                    if (state.data.isEmpty()) {
+                    binding.progressBar.visibility = View.GONE
+                    adapter.submitList(products)
+
+                    if (products.isEmpty()) {
                         binding.recyclerProducts.visibility = View.GONE
                         binding.tvEmpty.visibility = View.VISIBLE
                     } else {
@@ -123,15 +127,18 @@ class RestaurantDetailsFragment : Fragment(R.layout.fragment_restaurant_details)
         }
     }
 
-    private fun ProductDto.toCartItem() = com.example.namnyam.data.cart.CartItem(
-        productId = id,
-        name = name,
-        description = description,
-        price = price,
-        imageUrl = imageUrl,
-        weightGrams = weightGrams,
-        quantity = 1
-    )
+    private fun ProductDto.toCartItem(): CartItem {
+        return CartItem(
+            productId = id,
+            restaurantId = restaurantId,
+            name = name,
+            description = description,
+            price = price,
+            imageUrl = imageUrl,
+            weightGrams = weightGrams,
+            quantity = 1
+        )
+    }
 
     override fun onResume() {
         super.onResume()

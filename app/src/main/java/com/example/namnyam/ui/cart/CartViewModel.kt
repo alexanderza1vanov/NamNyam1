@@ -14,6 +14,10 @@ class CartViewModel : ViewModel() {
         notifyState()
     }
 
+    fun getItems(): List<CartItem> {
+        return cartManager.getItems()
+    }
+
     fun increase(productId: Long) {
         cartManager.increase(productId)
         notifyState()

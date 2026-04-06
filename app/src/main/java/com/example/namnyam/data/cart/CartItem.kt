@@ -2,6 +2,7 @@ package com.example.namnyam.data.cart
 
 data class CartItem(
     val productId: Long,
+    val restaurantId: Long,
     val name: String,
     val description: String?,
     val price: Double,
