@@ -1,20 +1,20 @@
 package com.example.namnyam.ui.checkout
-
+import androidx.core.os.bundleOf
+import androidx.navigation.navOptions
 import android.os.Bundle
 import android.view.View
 import android.widget.ArrayAdapter
-import android.widget.AdapterView
 import android.widget.Toast
-import androidx.core.content.ContextCompat
-import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.namnyam.R
+import com.example.namnyam.data.cart.CartManager
 import com.example.namnyam.data.remote.dto.DeliveryAddressDto
 import com.example.namnyam.data.remote.dto.OrderDto
 import com.example.namnyam.databinding.FragmentCheckoutBinding
 import com.example.namnyam.ui.client.CartItemUi
+import com.example.namnyam.ui.client.CartStore
 import com.example.namnyam.utils.UiState
 
 class CheckoutFragment : Fragment(R.layout.fragment_checkout) {
@@ -47,29 +47,13 @@ class CheckoutFragment : Fragment(R.layout.fragment_checkout) {
         viewModel.loadAddresses()
     }
 
-    override fun onResume() {
-        super.onResume()
-        viewModel.loadAddresses()
-    }
-
     private fun setupUi() {
-        binding.toolbar.navigationIcon =
-            ContextCompat.getDrawable(requireContext(), R.drawable.ic_arrow_back_24)
-
         binding.toolbar.setNavigationOnClickListener {
             findNavController().navigateUp()
         }
 
         binding.btnCreateOrder.setOnClickListener {
             submitOrder()
-        }
-
-        binding.btnAddAddress.setOnClickListener {
-            findNavController().navigate(R.id.addAddressFragment)
-        }
-
-        binding.btnOpenAddresses.setOnClickListener {
-            findNavController().navigate(R.id.addressesFragment)
         }
     }
 
@@ -81,15 +65,11 @@ class CheckoutFragment : Fragment(R.layout.fragment_checkout) {
                 UiState.Loading -> {
                     binding.progressAddresses.visibility = View.VISIBLE
                     binding.layoutAddressContent.visibility = View.GONE
-                    binding.tvAddressError.visibility = View.GONE
-                    binding.btnCreateOrder.isEnabled = false
                 }
 
                 is UiState.Success -> {
                     binding.progressAddresses.visibility = View.GONE
                     binding.layoutAddressContent.visibility = View.VISIBLE
-                    binding.tvAddressError.visibility = View.GONE
-
                     addresses = state.data
                     bindAddresses(state.data)
                 }
@@ -97,18 +77,11 @@ class CheckoutFragment : Fragment(R.layout.fragment_checkout) {
                 is UiState.Error -> {
                     binding.progressAddresses.visibility = View.GONE
                     binding.layoutAddressContent.visibility = View.GONE
-                    binding.tvAddressError.visibility = View.VISIBLE
-                    binding.tvAddressError.text =
-                        state.message.ifBlank { "Не удалось загрузить адреса доставки" }
-
-                    selectedAddress = null
-                    addresses = emptyList()
-                    binding.btnCreateOrder.isEnabled = false
-
                     Toast.makeText(
                         requireContext(),
-                        "Не удалось загрузить адреса. Добавьте адрес или проверьте сервер.",
-                        Toast.LENGTH_LONG).show()
+                        state.message,
+                        Toast.LENGTH_LONG
+                    ).show()
                 }
             }
         }
@@ -125,8 +98,12 @@ class CheckoutFragment : Fragment(R.layout.fragment_checkout) {
                 is UiState.Success -> {
                     binding.btnCreateOrder.isEnabled = true
                     binding.btnCreateOrder.text = "Оформить заказ"
-                    openOrderDetails(state.data)
+
+                    val createdOrder = state.data
+
+                    clearCartAfterOrder()
                     viewModel.resetCreateOrderState()
+                    openOrderDetailsAndClearBackStack(createdOrder.id)
                 }
 
                 is UiState.Error -> {
@@ -137,15 +114,13 @@ class CheckoutFragment : Fragment(R.layout.fragment_checkout) {
                         requireContext(),
                         state.message,
                         Toast.LENGTH_LONG
-                    ).show()
-                }
+                    ).show()}
             }
         }
     }
 
     private fun bindAddresses(list: List<DeliveryAddressDto>) {
         if (list.isEmpty()) {
-            selectedAddress = null
             binding.tvSelectedAddress.text = "У вас пока нет сохранённых адресов"
             binding.spinnerAddresses.visibility = View.GONE
             binding.btnCreateOrder.isEnabled = false
@@ -156,40 +131,37 @@ class CheckoutFragment : Fragment(R.layout.fragment_checkout) {
         binding.btnCreateOrder.isEnabled = true
 
         val titles = list.map { address ->
-            "${address.title} — ${address.addressLine}"
+            buildString {
+                append(address.title)
+                append(" — ")
+                append(address.addressLine)
+            }
         }
 
-        val spinnerAdapter = ArrayAdapter(
+        val adapter = ArrayAdapter(
             requireContext(),
             android.R.layout.simple_spinner_dropdown_item,
             titles
         )
-        binding.spinnerAddresses.adapter = spinnerAdapter
+        binding.spinnerAddresses.adapter = adapter
 
         val defaultAddress = list.firstOrNull { it.isDefault } ?: list.first()
         selectedAddress = defaultAddress
-        binding.tvSelectedAddress.text = "${defaultAddress.title}\n${defaultAddress.addressLine}"
+        binding.tvSelectedAddress.text =
+            "${defaultAddress.title}\n${defaultAddress.addressLine}"
 
         val selectedIndex = list.indexOfFirst { it.id == defaultAddress.id }
         if (selectedIndex >= 0) {
-            binding.spinnerAddresses.setSelection(selectedIndex, false)
+            binding.spinnerAddresses.setSelection(selectedIndex)
         }
 
-        binding.spinnerAddresses.onItemSelectedListener =
-            object : AdapterView.OnItemSelectedListener {
-                override fun onItemSelected(
-                    parent: AdapterView<*>?,
-                    view: View?,
-                    position: Int,
-                    id: Long
-                ) {
-                    val address = list[position]
-                    selectedAddress = address
-                    binding.tvSelectedAddress.text = "${address.title}\n${address.addressLine}"
-                }
-
-                override fun onNothingSelected(parent: AdapterView<*>?) = Unit
+        binding.spinnerAddresses.setOnItemSelectedListener(
+            SimpleItemSelectedListener { position ->
+                selectedAddress = list[position]
+                binding.tvSelectedAddress.text =
+                    "${list[position].title}\n${list[position].addressLine}"
             }
+        )
     }
 
     private fun renderCartSummary() {
@@ -226,10 +198,22 @@ class CheckoutFragment : Fragment(R.layout.fragment_checkout) {
         )
     }
 
-    private fun openOrderDetails(order: OrderDto) {
+    private fun clearCartAfterOrder() {
+        CartManager.getInstance().clear()
+        CartStore.clear(requireContext())
+        cartItems.clear()
+    }
+
+    private fun openOrderDetailsAndClearBackStack(orderId: Long) {
         findNavController().navigate(
             R.id.orderDetailsFragment,
-            bundleOf("orderId" to order.id)
+            bundleOf("orderId" to orderId),
+            navOptions {
+                launchSingleTop = true
+                popUpTo(R.id.checkoutFragment) {
+                    inclusive = true
+                }
+            }
         )
     }
 

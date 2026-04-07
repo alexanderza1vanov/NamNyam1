@@ -1,16 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-
     <item
         android:id="@+id/action_profile"
-        android:icon="@android:drawable/ic_menu_manage"
+        android:icon="@android:drawable/ic_menu_myplaces"
         android:title="Профиль"
-        android:showAsAction="ifRoom" />
+        android:showAsAction="always" />
 
     <item
         android:id="@+id/action_cart"
         android:icon="@android:drawable/ic_menu_view"
         android:title="Корзина"
         android:showAsAction="always" />
-
 </menu>

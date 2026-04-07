@@ -17,6 +17,7 @@
             android:backgroundTint="@android:color/white"
             android:minHeight="?attr/actionBarSize"
             app:title="Новый адрес"
+            android:paddingTop="30dp"
             app:titleTextColor="#111111" />
 
         <ScrollView

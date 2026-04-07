@@ -17,6 +17,7 @@
             android:backgroundTint="@android:color/white"
             android:minHeight="?attr/actionBarSize"
             app:title="История заказов"
+            android:paddingTop="30dp"
             app:titleTextColor="#111111" />
 
         <FrameLayout

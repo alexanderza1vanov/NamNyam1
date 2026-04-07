@@ -6,6 +6,7 @@
     android:background="#F8F8FA">
 
     <LinearLayout
+        android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
@@ -15,6 +16,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:backgroundTint="#FFFFFF"
+            android:paddingTop="30dp"
             app:navigationIcon="@drawable/ic_arrow_back_24"
             app:title="Мои адреса"
             app:titleTextColor="#111111" />
@@ -77,6 +79,7 @@
                         android:layout_marginTop="12dp"
                         android:text="Повторить" />
                 </LinearLayout>
+
             </FrameLayout>
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
     </LinearLayout>
@@ -88,5 +91,7 @@
         android:layout_margin="20dp"
         android:contentDescription="Добавить адрес"
         android:src="@android:drawable/ic_input_add"
-        app:layout_anchorGravity="bottom|end" />
+        app:layout_anchor="@+id/linearLayout"
+        app:layout_anchorGravity="end|bottom" />
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

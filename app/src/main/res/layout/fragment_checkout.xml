@@ -17,6 +17,7 @@
             android:backgroundTint="#FFFFFF"
             android:minHeight="?attr/actionBarSize"
             app:title="Оформление заказа"
+            android:paddingTop="30dp"
             app:titleTextColor="#111111" />
 
         <ScrollView
