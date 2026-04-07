@@ -6,6 +6,7 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class CartItemUi(
     val productId: Long,
+    val restaurantId: Long,
     val name: String,
     val price: Double,
     val quantity: Int,

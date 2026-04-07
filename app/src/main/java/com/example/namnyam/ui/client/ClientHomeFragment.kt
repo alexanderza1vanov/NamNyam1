@@ -18,6 +18,8 @@ class ClientHomeFragment : Fragment(R.layout.fragment_client_home) {
     private lateinit var viewModel: ClientHomeViewModel
     private lateinit var adapter: RestaurantAdapter
 
+    private var navigationInProgress = false
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentClientHomeBinding.bind(view)
@@ -25,12 +27,20 @@ class ClientHomeFragment : Fragment(R.layout.fragment_client_home) {
         viewModel = ViewModelProvider(this)[ClientHomeViewModel::class.java]
 
         adapter = RestaurantAdapter { restaurant ->
+            val navController = findNavController()
+
+            if (navigationInProgress) return@RestaurantAdapter
+            if (navController.currentDestination?.id != R.id.clientHomeFragment) return@RestaurantAdapter
+
+            navigationInProgress = true
+
             val bundle = Bundle().apply {
                 putLong("restaurantId", restaurant.id)
                 putString("restaurantName", restaurant.name)
                 putString("restaurantDescription", restaurant.description ?: "")
             }
-            findNavController().navigate(
+
+            navController.navigate(
                 R.id.action_clientHomeFragment_to_restaurantDetailsFragment,
                 bundle
             )
@@ -40,11 +50,23 @@ class ClientHomeFragment : Fragment(R.layout.fragment_client_home) {
         binding.recyclerRestaurants.adapter = adapter
 
         binding.toolbar.setOnMenuItemClickListener { item ->
+            val navController = findNavController()
+
             when (item.itemId) {
                 R.id.action_cart -> {
-                    findNavController().navigate(R.id.action_clientHomeFragment_to_cartFragment)
+                    if (navController.currentDestination?.id == R.id.clientHomeFragment) {
+                        navController.navigate(R.id.action_clientHomeFragment_to_cartFragment)
+                    }
                     true
                 }
+
+                R.id.action_profile -> {
+                    if (navController.currentDestination?.id == R.id.clientHomeFragment) {
+                        navController.navigate(R.id.profileFragment)
+                    }
+                    true
+                }
+
                 else -> false
             }
         }
@@ -64,12 +86,16 @@ class ClientHomeFragment : Fragment(R.layout.fragment_client_home) {
                     binding.tvEmpty.visibility = View.GONE
                 }
 
-                is UiState.Success -> {
+                is UiState.Success<*> -> {
+                    @Suppress("UNCHECKED_CAST")
+                    val restaurants = state.data as List<com.example.namnyam.data.remote.dto.RestaurantDto>
+
                     binding.progressBar.visibility = View.GONE
                     binding.swipeRefresh.isRefreshing = false
-                    adapter.submitList(state.data)
 
-                    if (state.data.isEmpty()) {
+                    adapter.submitList(restaurants)
+
+                    if (restaurants.isEmpty()) {
                         binding.tvEmpty.visibility = View.VISIBLE
                         binding.recyclerRestaurants.visibility = View.GONE
                     } else {
@@ -89,6 +115,11 @@ class ClientHomeFragment : Fragment(R.layout.fragment_client_home) {
         }
 
         viewModel.loadRestaurants()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        navigationInProgress = false
     }
 
     override fun onDestroyView() {

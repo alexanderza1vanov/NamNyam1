@@ -19,12 +19,10 @@ class CheckoutViewModel(
     private val orderRepository: OrderRepository
 ) : ViewModel() {
 
-    private val _addressesState =
-        MutableLiveData<UiState<List<DeliveryAddressDto>>>(UiState.Idle)
+    private val _addressesState = MutableLiveData<UiState<List<DeliveryAddressDto>>>(UiState.Idle)
     val addressesState: LiveData<UiState<List<DeliveryAddressDto>>> = _addressesState
 
-    private val _createOrderState =
-        MutableLiveData<UiState<OrderDto>>(UiState.Idle)
+    private val _createOrderState = MutableLiveData<UiState<OrderDto>>(UiState.Idle)
     val createOrderState: LiveData<UiState<OrderDto>> = _createOrderState
 
     fun loadAddresses() {
@@ -50,8 +48,8 @@ class CheckoutViewModel(
         val request = CreateOrderRequest(
             restaurantId = restaurantId,
             addressId = addressId,
-            comment = comment?.takeIf { it.isNotBlank() },
-            cartItems = cartItems.map {
+            comment = comment?.trim().orEmpty(),
+            items = cartItems.map {
                 CreateOrderItemRequest(
                     productId = it.productId,
                     quantity = it.quantity

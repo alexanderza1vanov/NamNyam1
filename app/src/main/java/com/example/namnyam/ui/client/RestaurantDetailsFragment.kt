@@ -2,14 +2,13 @@ package com.example.namnyam.ui.client
 
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.namnyam.R
-import com.example.namnyam.data.cart.CartItem
-import com.example.namnyam.data.cart.CartManager
 import com.example.namnyam.data.remote.dto.ProductDto
 import com.example.namnyam.databinding.FragmentRestaurantDetailsBinding
 import com.example.namnyam.utils.UiState
@@ -21,7 +20,6 @@ class RestaurantDetailsFragment : Fragment(R.layout.fragment_restaurant_details)
 
     private lateinit var viewModel: RestaurantDetailsViewModel
     private lateinit var adapter: ProductAdapter
-    private lateinit var cartManager: CartManager
 
     private var restaurantId: Long = -1L
     private var restaurantName: String = ""
@@ -36,7 +34,6 @@ class RestaurantDetailsFragment : Fragment(R.layout.fragment_restaurant_details)
         restaurantDescription = arguments?.getString("restaurantDescription").orEmpty()
 
         viewModel = ViewModelProvider(this)[RestaurantDetailsViewModel::class.java]
-        cartManager = CartManager.getInstance()
 
         binding.toolbar.navigationIcon =
             ContextCompat.getDrawable(requireContext(), R.drawable.ic_arrow_back_24)
@@ -51,18 +48,26 @@ class RestaurantDetailsFragment : Fragment(R.layout.fragment_restaurant_details)
                     findNavController().navigate(R.id.action_restaurantDetailsFragment_to_cartFragment)
                     true
                 }
+
+                R.id.action_profile -> {
+                    findNavController().navigate(R.id.profileFragment)
+                    true
+                }
+
                 else -> false
             }
         }
 
         binding.tvRestaurantName.text = restaurantName
         binding.tvRestaurantDescription.text =
-            if (restaurantDescription.isBlank()) "Лучшие блюда ресторана"
-            else restaurantDescription
+            if (restaurantDescription.isBlank()) {
+                "Лучшие блюда ресторана"
+            } else {
+                restaurantDescription
+            }
 
         adapter = ProductAdapter { product ->
-            cartManager.add(product.toCartItem())
-            updateMiniCart()
+            addProductToCart(product)
         }
 
         binding.recyclerProducts.layoutManager = LinearLayoutManager(requireContext())
@@ -114,9 +119,51 @@ class RestaurantDetailsFragment : Fragment(R.layout.fragment_restaurant_details)
         }
     }
 
+    private fun addProductToCart(product: ProductDto) {
+        val currentItems = CartStore.load(requireContext())
+
+        val hasAnotherRestaurant = currentItems.any { it.restaurantId != restaurantId }
+        if (hasAnotherRestaurant) {
+            Toast.makeText(
+                requireContext(),
+                "В корзине уже есть товары из другого ресторана",
+                Toast.LENGTH_SHORT
+            ).show()
+            return
+        }
+
+        val index = currentItems.indexOfFirst { it.productId == product.id }
+
+        if (index >= 0) {
+            val oldItem = currentItems[index]
+            currentItems[index] = oldItem.copy(quantity = oldItem.quantity + 1)
+        } else {
+            currentItems.add(
+                CartItemUi(
+                    productId = product.id,
+                    restaurantId = restaurantId,
+                    name = product.name,
+                    price = product.price,
+                    quantity = 1,
+                    imageUrl = product.imageUrl?.trim()
+                )
+            )
+        }
+
+        CartStore.save(requireContext(), currentItems)
+        updateMiniCart()
+
+        Toast.makeText(
+            requireContext(),
+            "Добавлено: ${product.name}",
+            Toast.LENGTH_SHORT
+        ).show()
+    }
+
     private fun updateMiniCart() {
-        val count = cartManager.getTotalCount()
-        val total = cartManager.getTotalPrice()
+        val items = CartStore.load(requireContext())
+        val count = items.sumOf { it.quantity }
+        val total = items.sumOf { it.totalPrice }
 
         if (count > 0) {
             binding.miniCart.root.visibility = View.VISIBLE
@@ -125,19 +172,6 @@ class RestaurantDetailsFragment : Fragment(R.layout.fragment_restaurant_details)
         } else {
             binding.miniCart.root.visibility = View.GONE
         }
-    }
-
-    private fun ProductDto.toCartItem(): CartItem {
-        return CartItem(
-            productId = id,
-            restaurantId = restaurantId,
-            name = name,
-            description = description,
-            price = price,
-            imageUrl = imageUrl,
-            weightGrams = weightGrams,
-            quantity = 1
-        )
     }
 
     override fun onResume() {

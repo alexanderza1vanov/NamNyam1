@@ -22,21 +22,17 @@ class CartFragment : Fragment(R.layout.fragment_cart) {
     private lateinit var adapter: CartAdapter
 
     private val cartItems = mutableListOf<CartItemUi>()
-
-    private var restaurantId: Long = -1L
     private var deliveryFee: Double = 199.0
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentCartBinding.bind(view)
 
-        restaurantId = arguments?.getLong("restaurantId") ?: -1L
         deliveryFee = arguments?.getDouble("deliveryFee") ?: 199.0
 
         setupToolbar()
         setupRecycler()
         setupActions()
-
         loadCart()
         renderCart()
     }
@@ -92,7 +88,6 @@ class CartFragment : Fragment(R.layout.fragment_cart) {
         if (index == -1) return
 
         val old = cartItems[index]
-
         if (old.quantity <= 1) {
             cartItems.removeAt(index)
         } else {
@@ -132,12 +127,10 @@ class CartFragment : Fragment(R.layout.fragment_cart) {
         val finalTotal = if (cartItems.isEmpty()) 0.0 else itemsTotal + deliveryFee
 
         binding.tvItemsTotal.text = "${itemsTotal.toInt()} ₽"
-        binding.tvDeliveryFee.text =
-            if (cartItems.isEmpty()) "0 ₽" else "${deliveryFee.toInt()} ₽"
+        binding.tvDeliveryFee.text = if (cartItems.isEmpty()) "0 ₽" else "${deliveryFee.toInt()} ₽"
         binding.tvFinalTotal.text = "${finalTotal.toInt()} ₽"
 
         val isEmpty = cartItems.isEmpty()
-
         binding.recyclerCart.visibility = if (isEmpty) View.GONE else View.VISIBLE
         binding.layoutSummary.visibility = if (isEmpty) View.GONE else View.VISIBLE
         binding.tvEmpty.visibility = if (isEmpty) View.VISIBLE else View.GONE
@@ -150,7 +143,8 @@ class CartFragment : Fragment(R.layout.fragment_cart) {
             return
         }
 
-        if (restaurantId == -1L) {
+        val resolvedRestaurantId = cartItems.firstOrNull()?.restaurantId ?: -1L
+        if (resolvedRestaurantId == -1L) {
             Toast.makeText(requireContext(), "Не удалось определить ресторан", Toast.LENGTH_SHORT)
                 .show()
             return
@@ -160,7 +154,7 @@ class CartFragment : Fragment(R.layout.fragment_cart) {
         val totalPrice = cartItems.sumOf { it.totalPrice }
 
         val bundle = Bundle().apply {
-            putLong("restaurantId", restaurantId)
+            putLong("restaurantId", resolvedRestaurantId)
             putDouble("totalPrice", totalPrice)
             putDouble("deliveryFee", deliveryFee)
             putParcelableArrayList("cartItems", items)

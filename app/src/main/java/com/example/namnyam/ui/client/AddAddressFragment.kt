@@ -41,7 +41,10 @@ class AddAddressFragment : Fragment(R.layout.fragment_add_address) {
     private fun observeState() {
         viewModel.state.observe(viewLifecycleOwner) { state ->
             when (state) {
-                is UiState.Idle -> Unit
+                is UiState.Idle -> {
+                    binding.progressBar.visibility = View.GONE
+                    binding.btnSave.isEnabled = true
+                }
 
                 is UiState.Loading -> {
                     binding.progressBar.visibility = View.VISIBLE
@@ -51,14 +54,24 @@ class AddAddressFragment : Fragment(R.layout.fragment_add_address) {
                 is UiState.Success -> {
                     binding.progressBar.visibility = View.GONE
                     binding.btnSave.isEnabled = true
+
+                    findNavController().previousBackStackEntry
+                        ?.savedStateHandle
+                        ?.set("address_added", true)
+
                     Toast.makeText(requireContext(), "Адрес добавлен", Toast.LENGTH_SHORT).show()
+                    viewModel.reset()
                     findNavController().navigateUp()
                 }
 
                 is UiState.Error -> {
                     binding.progressBar.visibility = View.GONE
                     binding.btnSave.isEnabled = true
-                    Toast.makeText(requireContext(), state.message, Toast.LENGTH_LONG).show()
+                    Toast.makeText(
+                        requireContext(),
+                        state.message,
+                        Toast.LENGTH_LONG
+                    ).show()
                 }
             }
         }

@@ -19,6 +19,7 @@ class AddressesFragment : Fragment(R.layout.fragment_addresses) {
     private lateinit var viewModel: AdressesViewModel
     private lateinit var adapter: AdressesAdapter
 
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentAddressesBinding.bind(view)
@@ -30,7 +31,22 @@ class AddressesFragment : Fragment(R.layout.fragment_addresses) {
 
         setupUi()
         observeState()
+        viewModel.loadAddresses()
+        findNavController().currentBackStackEntry
+            ?.savedStateHandle
+            ?.getLiveData<Boolean>("address_added")
+            ?.observe(viewLifecycleOwner) { added ->
+                if (added == true) {
+                    viewModel.loadAddresses()
+                    findNavController().currentBackStackEntry
+                        ?.savedStateHandle
+                        ?.set("address_added", false)
+                }
+            }
+    }
 
+    override fun onResume() {
+        super.onResume()
         viewModel.loadAddresses()
     }
 
@@ -51,7 +67,7 @@ class AddressesFragment : Fragment(R.layout.fragment_addresses) {
         }
 
         binding.fabAddAddress.setOnClickListener {
-            Toast.makeText(requireContext(), "Экран добавления адреса подключим следующим шагом", Toast.LENGTH_SHORT).show()
+            findNavController().navigate(R.id.addAddressFragment)
         }
 
         binding.btnRetry.setOnClickListener {
@@ -95,6 +111,8 @@ class AddressesFragment : Fragment(R.layout.fragment_addresses) {
                     binding.tvEmpty.visibility = View.GONE
                     binding.layoutError.visibility = View.VISIBLE
                     binding.tvError.text = state.message
+
+                    Toast.makeText(requireContext(), state.message, Toast.LENGTH_LONG).show()
                 }
             }
         }

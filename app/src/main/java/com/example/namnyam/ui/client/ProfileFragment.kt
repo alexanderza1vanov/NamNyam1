@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.namnyam.R
 import com.example.namnyam.data.local.SessionManager
+import com.example.namnyam.data.storage.TokenManager
 import com.example.namnyam.databinding.FragmentProfileBinding
 
 class ProfileFragment : Fragment(R.layout.fragment_profile) {
@@ -15,12 +16,14 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
     private val binding get() = _binding!!
 
     private lateinit var sessionManager: SessionManager
+    private lateinit var tokenManager: TokenManager
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentProfileBinding.bind(view)
 
         sessionManager = SessionManager(requireContext())
+        tokenManager = TokenManager(requireContext())
 
         setupUserInfo()
         setupClicks()
@@ -29,11 +32,14 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
     private fun setupUserInfo() {
         val userName = sessionManager.getUserName().ifBlank { "Пользователь" }
         val userEmail = sessionManager.getUserEmail().ifBlank { "Email не указан" }
-        val userRole = sessionManager.getUserRole().ifBlank { "CLIENT" }
+
+        val roleFromSession = sessionManager.getUserRole()
+        val roleFromToken = tokenManager.getUserRole().orEmpty()
+        val userRole = if (roleFromSession.isNotBlank()) roleFromSession else roleFromToken
 
         binding.tvUserName.text = userName
         binding.tvUserEmail.text = userEmail
-        binding.tvUserRole.text = mapRole(userRole)
+        binding.tvUserRole.text = mapRole(userRole.ifBlank { "CLIENT" })
     }
 
     private fun setupClicks() {
@@ -52,6 +58,8 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
 
     private fun logout() {
         sessionManager.clearSession()
+        tokenManager.clear()
+        CartStore.clear(requireContext())
 
         Toast.makeText(
             requireContext(),

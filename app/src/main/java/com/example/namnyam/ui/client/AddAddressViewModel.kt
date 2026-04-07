@@ -1,21 +1,24 @@
 package com.example.namnyam.ui.client
 
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.namnyam.data.remote.dto.CreateAddressRequest
 import com.example.namnyam.data.remote.dto.DeliveryAddressDto
+import com.example.namnyam.data.remote.network.RetrofitProvider
 import com.example.namnyam.data.repository.AddressRepository
 import com.example.namnyam.utils.UiState
 import kotlinx.coroutines.launch
 
-class AddAddressViewModel(
-    private val repository: AddressRepository
-) : ViewModel() {
+class AddAddressViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val _state =
-        MutableLiveData<UiState<DeliveryAddressDto>>(UiState.Idle)
+    private val repository = AddressRepository(
+        RetrofitProvider.getApi(application)
+    )
+
+    private val _state = MutableLiveData<UiState<DeliveryAddressDto>>(UiState.Idle)
     val state: LiveData<UiState<DeliveryAddressDto>> = _state
 
     fun createAddress(

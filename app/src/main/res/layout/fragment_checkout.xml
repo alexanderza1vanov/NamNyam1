@@ -16,7 +16,6 @@
             android:layout_height="wrap_content"
             android:backgroundTint="#FFFFFF"
             android:minHeight="?attr/actionBarSize"
-            app:navigationIcon="@drawable/ic_arrow_back_24"
             app:title="Оформление заказа"
             app:titleTextColor="#111111" />
 
@@ -24,13 +23,14 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:fillViewport="true">
+            android:fillViewport="true"
+            android:clipToPadding="false"
+            android:padding="16dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp">
+                android:orientation="vertical">
 
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
@@ -41,7 +41,6 @@
                     app:strokeWidth="1dp">
 
                     <LinearLayout
-                        android:id="@+id/layoutAddressContent"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
@@ -63,18 +62,58 @@
                             android:visibility="gone" />
 
                         <TextView
-                            android:id="@+id/tvSelectedAddress"
+                            android:id="@+id/tvAddressError"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="12dp"
-                            android:textColor="#555555"
-                            android:textSize="14sp" />
+                            android:textColor="#D32F2F"
+                            android:textSize="14sp"
+                            android:visibility="gone" />
 
-                        <Spinner
-                            android:id="@+id/spinnerAddresses"
+                        <LinearLayout
+                            android:id="@+id/layoutAddressContent"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="12dp" />
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/tvSelectedAddress"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="12dp"
+                                android:textColor="#555555"
+                                android:textSize="14sp" />
+
+                            <Spinner
+                                android:id="@+id/spinnerAddresses"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="12dp" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="12dp"
+                            android:orientation="horizontal">
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/btnAddAddress"
+                                style="@style/Widget.Material3.Button.OutlinedButton"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="Добавить адрес" />
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/btnOpenAddresses"
+                                style="@style/Widget.Material3.Button.TextButton"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="8dp"
+                                android:text="Мои адреса" />
+                        </LinearLayout>
+
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
@@ -127,7 +166,6 @@
                     app:cardElevation="0dp"
                     app:strokeColor="#E8E8EE"
                     app:strokeWidth="1dp">
-
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -146,8 +184,7 @@
                             android:id="@+id/tvItemsCount"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="10dp"
-                            android:text="Товаров: 0"
+                            android:layout_marginTop="12dp"
                             android:textColor="#666666"
                             android:textSize="14sp" />
 
@@ -156,12 +193,12 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
-                            android:text="Итого: 0 ₽"
                             android:textColor="#111111"
-                            android:textSize="20sp"
+                            android:textSize="28sp"
                             android:textStyle="bold" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
+
             </LinearLayout>
         </ScrollView>
 
@@ -169,9 +206,8 @@
             android:id="@+id/btnCreateOrder"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="16dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="16dp"
+            android:layout_margin="16dp"
             android:text="Оформить заказ" />
     </LinearLayout>
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

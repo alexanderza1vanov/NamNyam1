@@ -3,8 +3,8 @@ package com.example.namnyam.data.remote.dto
 data class CreateOrderRequest(
     val restaurantId: Long,
     val addressId: Long,
-    val comment: String? = null,
-    val cartItems: List<CreateOrderItemRequest>
+    val comment: String = "",
+    val items: List<CreateOrderItemRequest>
 )
 
 data class CreateOrderItemRequest(
