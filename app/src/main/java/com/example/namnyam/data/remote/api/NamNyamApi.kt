@@ -1,23 +1,21 @@
 package com.example.namnyam.data.remote.api
 
-import com.example.namnyam.data.remote.dto.AddressDto
 import com.example.namnyam.data.remote.dto.AuthResponseDto
 import com.example.namnyam.data.remote.dto.CreateAddressRequest
-import com.example.namnyam.data.remote.dto.CreateAddressRequestDto
 import com.example.namnyam.data.remote.dto.CreateOrderRequest
-import com.example.namnyam.data.remote.dto.CreateOrderRequestDto
 import com.example.namnyam.data.remote.dto.DeliveryAddressDto
 import com.example.namnyam.data.remote.dto.LoginRequestDto
 import com.example.namnyam.data.remote.dto.OrderDto
 import com.example.namnyam.data.remote.dto.ProductDto
 import com.example.namnyam.data.remote.dto.RegisterRequestDto
 import com.example.namnyam.data.remote.dto.RestaurantDto
+import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Path
-import retrofit2.Response
 
 interface NamNyamApi {
 
@@ -39,21 +37,6 @@ interface NamNyamApi {
         @Path("restaurantId") restaurantId: Long
     ): List<ProductDto>
 
-    // Addresses
-//    @GET("addresses")
-//    suspend fun getAddresses(): List<AddressDto>
-//
-//    @POST("addresses")
-//    suspend fun createAddress(
-//        @Body body: CreateAddressRequestDto
-//    ): AddressDto
-
-    // Orders
-//    @POST("orders")
-//    suspend fun createOrder(
-//        @Body body: CreateOrderRequestDto
-//    ): OrderDto
-
     @GET("orders/my")
     suspend fun getMyOrders(): List<OrderDto>
 
@@ -61,14 +44,6 @@ interface NamNyamApi {
     suspend fun getOrderById(
         @Path("orderId") orderId: Long
     ): OrderDto
-
-    // Owner
-//    @GET("owner/orders")
-//    suspend fun getOwnerOrders(): List<OrderDto>
-//
-//    // Courier
-//    @GET("courier/orders")
-//    suspend fun getCourierOrders(): List<OrderDto>
 
     @GET("addresses/my")
     suspend fun getMyAddresses(): List<DeliveryAddressDto>
@@ -86,5 +61,33 @@ interface NamNyamApi {
     @POST("orders")
     suspend fun createOrder(
         @Body request: CreateOrderRequest
+    ): OrderDto
+
+    // OWNER
+
+    @GET("restaurants/my")
+    suspend fun getMyRestaurant(): RestaurantDto
+
+    @GET("owner/orders")
+    suspend fun getOwnerOrders(): List<OrderDto>
+
+    @PUT("owner/orders/{id}/confirm")
+    suspend fun confirmOwnerOrder(
+        @Path("id") orderId: Long
+    ): OrderDto
+
+    @PUT("owner/orders/{id}/cooking")
+    suspend fun startCookingOwnerOrder(
+        @Path("id") orderId: Long
+    ): OrderDto
+
+    @PUT("owner/orders/{id}/ready")
+    suspend fun markReadyOwnerOrder(
+        @Path("id") orderId: Long
+    ): OrderDto
+
+    @PUT("owner/orders/{id}/cancel")
+    suspend fun cancelOwnerOrder(
+        @Path("id") orderId: Long
     ): OrderDto
 }
