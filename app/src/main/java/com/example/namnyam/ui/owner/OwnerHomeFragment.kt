@@ -41,11 +41,18 @@ class OwnerHomeFragment : Fragment(R.layout.fragment_owner_home) {
         super.onResume()
 
         val handle = findNavController().currentBackStackEntry?.savedStateHandle ?: return
-        val created = handle.get<Boolean>("restaurant_created") ?: false
 
+        val created = handle.get<Boolean>("restaurant_created") ?: false
         if (created) {
             handle.remove<Boolean>("restaurant_created")
             Toast.makeText(requireContext(), "Ресторан создан", Toast.LENGTH_SHORT).show()
+            viewModel.refreshAll()
+        }
+
+        val updated = handle.get<Boolean>("restaurant_updated") ?: false
+        if (updated) {
+            handle.remove<Boolean>("restaurant_updated")
+            Toast.makeText(requireContext(), "Ресторан обновлён", Toast.LENGTH_SHORT).show()
             viewModel.refreshAll()
         }
     }
@@ -75,6 +82,22 @@ class OwnerHomeFragment : Fragment(R.layout.fragment_owner_home) {
 
         binding.btnCreateRestaurant.setOnClickListener {
             openCreateRestaurant()
+        }
+
+        binding.btnEditRestaurant.setOnClickListener {
+            val navController = findNavController()
+            if (navController.currentDestination?.id != R.id.ownerHomeFragment) return@setOnClickListener
+            navController.navigate(R.id.action_ownerHomeFragment_to_editRestaurantFragment)
+        }
+
+        binding.btnManageProducts.setOnClickListener {
+            val navController = findNavController()
+            if (navController.currentDestination?.id != R.id.ownerHomeFragment) return@setOnClickListener
+            navController.navigate(R.id.action_ownerHomeFragment_to_ownerProductsFragment)
+        }
+
+        binding.btnToggleRestaurant.setOnClickListener {
+            viewModel.toggleRestaurantOpenState()
         }
     }
 
@@ -130,35 +153,30 @@ class OwnerHomeFragment : Fragment(R.layout.fragment_owner_home) {
         binding.tvRestaurantPhone.text = "Телефон: ${restaurant.phone}"
 
         val metaParts = mutableListOf<String>()
-
-        if (restaurant.isOpen) {
-            metaParts.add("Открыт")
-        } else {
-            metaParts.add("Закрыт")
-        }
+        metaParts.add(if (restaurant.isOpen) "Открыт" else "Закрыт")
 
         val cuisine = restaurant.cuisineType
         if (!cuisine.isNullOrBlank()) {
             metaParts.add(cuisine)
         }
 
-        val deliveryTime = restaurant.deliveryTimeMin
-        if (deliveryTime != null) {
-            metaParts.add("Доставка ${deliveryTime} мин")
+        restaurant.deliveryTimeMin?.let {
+            metaParts.add("Доставка ${it} мин")
         }
 
         binding.tvRestaurantMeta.text = metaParts.joinToString(" • ")
-
         binding.tvRestaurantDelivery.text =
             "Доставка ${formatMoney(restaurant.deliveryFee)} • Мин. заказ ${formatMoney(restaurant.minOrderAmount)}"
 
-        val description = restaurant.description
         binding.tvRestaurantDescription.text =
-            if (description.isNullOrBlank()) {
+            if (restaurant.description.isNullOrBlank()) {
                 "Описание отсутствует"
             } else {
-                description
+                restaurant.description
             }
+
+        binding.btnToggleRestaurant.text =
+            if (restaurant.isOpen) "Закрыть ресторан" else "Открыть ресторан"
     }
 
     private fun renderOrdersState(state: UiState<List<OrderDto>>) {
@@ -194,12 +212,12 @@ class OwnerHomeFragment : Fragment(R.layout.fragment_owner_home) {
                 binding.recyclerOrders.visibility = View.GONE
                 binding.tvOrdersEmpty.visibility = View.VISIBLE
                 binding.tvOrdersEmpty.text =
-                    state.message.ifBlank { "Не удалось загрузить заказы" }
+                    state.message.ifBlank { "Не удалось загрузить заказы ресторана" }
             }
         }
     }
 
-    private fun renderActionState(state: UiState<OrderDto>) {
+    private fun renderActionState(state: UiState<Unit>) {
         when (state) {
             UiState.Idle -> Unit
 
@@ -211,7 +229,7 @@ class OwnerHomeFragment : Fragment(R.layout.fragment_owner_home) {
                 binding.swipeRefresh.isRefreshing = false
                 Toast.makeText(
                     requireContext(),
-                    "Статус заказа обновлён",
+                    "Действие выполнено",
                     Toast.LENGTH_SHORT
                 ).show()
             }
@@ -241,7 +259,6 @@ class OwnerHomeFragment : Fragment(R.layout.fragment_owner_home) {
     private fun openCreateRestaurant() {
         val navController = findNavController()
         if (navController.currentDestination?.id != R.id.ownerHomeFragment) return
-
         navController.navigate(R.id.action_ownerHomeFragment_to_createRestaurantFragment)
     }
 
@@ -265,60 +282,5 @@ class OwnerHomeFragment : Fragment(R.layout.fragment_owner_home) {
         viewModel.actionState = null
         _binding = null
         super.onDestroyView()
-    }
-    private var currentRestaurant: RestaurantDto? = null
-
-    private fun setupListeners() {
-        binding.swipeRefresh.setOnRefreshListener {
-            viewModel.refreshAll()
-        }
-
-        binding.btnCreateRestaurant.setOnClickListener {
-            openCreateRestaurant()
-        }
-
-        binding.btnEditRestaurant.setOnClickListener {
-            val navController = findNavController()
-            if (navController.currentDestination?.id != R.id.ownerHomeFragment) return@setOnClickListener
-            navController.navigate(R.id.action_ownerHomeFragment_to_editRestaurantFragment)
-        }
-
-        binding.btnManageProducts.setOnClickListener {
-            val navController = findNavController()
-            if (navController.currentDestination?.id != R.id.ownerHomeFragment) return@setOnClickListener
-            navController.navigate(R.id.action_ownerHomeFragment_to_ownerProductsFragment)
-        }
-
-        binding.btnToggleRestaurant.setOnClickListener {
-            viewModel.toggleRestaurantOpenState()
-        }
-    }
-
-    private fun bindRestaurant(restaurant: RestaurantDto) {
-        binding.tvRestaurantName.text = restaurant.name
-        binding.tvRestaurantAddress.text = restaurant.address
-        binding.tvRestaurantPhone.text = "Телефон: ${restaurant.phone}"
-
-        val metaParts = mutableListOf<String>()
-        metaParts.add(if (restaurant.isOpen) "Открыт" else "Закрыт")
-
-        val cuisine = restaurant.cuisineType
-        if (!cuisine.isNullOrBlank()) {
-            metaParts.add(cuisine)
-        }
-
-        restaurant.deliveryTimeMin?.let {
-            metaParts.add("Доставка ${it} мин")
-        }
-
-        binding.tvRestaurantMeta.text = metaParts.joinToString(" • ")
-        binding.tvRestaurantDelivery.text =
-            "Доставка ${formatMoney(restaurant.deliveryFee)} • Мин. заказ ${formatMoney(restaurant.minOrderAmount)}"
-
-        binding.tvRestaurantDescription.text =
-            if (restaurant.description.isNullOrBlank()) "Описание отсутствует" else restaurant.description
-
-        binding.btnToggleRestaurant.text =
-            if (restaurant.isOpen) "Закрыть ресторан" else "Открыть ресторан"
     }
 }

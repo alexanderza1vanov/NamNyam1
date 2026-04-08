@@ -60,13 +60,12 @@ class EditRestaurantFragment : Fragment(R.layout.fragment_create_restaurant) {
                     binding.progressCreateRestaurant.visibility = View.VISIBLE
                     binding.btnCreateRestaurant.isEnabled = false
                 }
-                is UiState.Success<*> -> {
+                is UiState.Success -> {
                     binding.progressCreateRestaurant.visibility = View.GONE
                     binding.btnCreateRestaurant.isEnabled = true
 
-                    val restaurant = state.data as RestaurantDto
-                    currentRestaurant = restaurant
-                    bindRestaurant(restaurant)
+                    currentRestaurant = state.data
+                    bindRestaurant(state.data)
                 }
                 is UiState.Error -> {
                     binding.progressCreateRestaurant.visibility = View.GONE
@@ -83,7 +82,7 @@ class EditRestaurantFragment : Fragment(R.layout.fragment_create_restaurant) {
                     binding.progressCreateRestaurant.visibility = View.VISIBLE
                     binding.btnCreateRestaurant.isEnabled = false
                 }
-                is UiState.Success<*> -> {
+                is UiState.Success -> {
                     binding.progressCreateRestaurant.visibility = View.GONE
                     binding.btnCreateRestaurant.isEnabled = true
 

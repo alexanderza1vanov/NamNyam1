@@ -59,42 +59,63 @@
                         android:layout_height="wrap_content"
                         android:textSize="18sp"
                         android:textStyle="bold"
-                        tools:text="NamNyam Pizza" />
+                        tools:text="Le Cler" />
 
                     <TextView
                         android:id="@+id/tvRestaurantAddress"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        tools:text="Москва, ул. Пушкина, д. 10" />
+                        tools:text="Moscow" />
 
                     <TextView
                         android:id="@+id/tvRestaurantPhone"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="6dp"
-                        tools:text="Телефон: +79991112233" />
+                        tools:text="Телефон: 88888888888" />
 
                     <TextView
                         android:id="@+id/tvRestaurantMeta"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="6dp"
-                        tools:text="Открыт • Italian • Доставка 45 мин" />
+                        tools:text="Открыт • French • Доставка 15 мин" />
 
                     <TextView
                         android:id="@+id/tvRestaurantDelivery"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="6dp"
-                        tools:text="Доставка 199 ₽ • Мин. заказ 500 ₽" />
+                        tools:text="Доставка 150 ₽ • Мин. заказ 400 ₽" />
 
                     <TextView
                         android:id="@+id/tvRestaurantDescription"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
-                        tools:text="Пицца, паста и напитки" />
+                        tools:text="French Bakery" />
+
+                    <Button
+                        android:id="@+id/btnEditRestaurant"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="14dp"
+                        android:text="Редактировать ресторан" />
+
+                    <Button
+                        android:id="@+id/btnManageProducts"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="Мои блюда" />
+
+                    <Button
+                        android:id="@+id/btnToggleRestaurant"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="Закрыть ресторан" />
                 </LinearLayout>
 
                 <LinearLayout

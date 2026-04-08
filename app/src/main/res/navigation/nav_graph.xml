@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
     app:startDestination="@id/splashFragment">
 
@@ -86,7 +85,6 @@
         <action
             android:id="@+id/action_clientHomeFragment_to_restaurantDetailsFragment"
             app:destination="@id/restaurantDetailsFragment" />
-
         <action
             android:id="@+id/action_clientHomeFragment_to_cartFragment"
             app:destination="@id/cartFragment" />
@@ -96,8 +94,6 @@
         android:id="@+id/restaurantDetailsFragment"
         android:name="com.example.namnyam.ui.client.RestaurantDetailsFragment"
         android:label="RestaurantDetails">
-
-
         <action
             android:id="@+id/action_restaurantDetailsFragment_to_cartFragment"
             app:destination="@id/cartFragment" />
@@ -106,32 +102,21 @@
     <fragment
         android:id="@+id/cartFragment"
         android:name="com.example.namnyam.ui.cart.CartFragment"
-        android:label="Cart" />
+        android:label="Cart">
         <action
             android:id="@+id/action_cartFragment_to_checkoutFragment"
             app:destination="@id/checkoutFragment" />
-
-    <fragment
-        android:id="@+id/ownerHomeFragment"
-        android:name="com.example.namnyam.ui.owner.OwnerHomeFragment"
-        android:label="OwnerHome">
-
-        <action
-            android:id="@+id/action_ownerHomeFragment_to_createRestaurantFragment"
-            app:destination="@id/createRestaurantFragment" />
-        <action
-            android:id="@+id/action_ownerHomeFragment_to_editRestaurantFragment"
-            app:destination="@id/editRestaurantFragment" />
-
-        <action
-            android:id="@+id/action_ownerHomeFragment_to_ownerProductsFragment"
-            app:destination="@id/ownerProductsFragment" />
     </fragment>
 
     <fragment
-        android:id="@+id/createRestaurantFragment"
-        android:name="com.example.namnyam.ui.owner.CreateRestaurantFragment"
-        android:label="CreateRestaurantFragment" />
+        android:id="@+id/checkoutFragment"
+        android:name="com.example.namnyam.ui.checkout.CheckoutFragment"
+        android:label="CheckoutFragment">
+        <action
+            android:id="@+id/action_checkoutFragment_to_orderDetailsFragment"
+            app:destination="@id/orderDetailsFragment" />
+    </fragment>
+
     <fragment
         android:id="@+id/addressesFragment"
         android:name="com.example.namnyam.ui.client.AddressesFragment"
@@ -145,18 +130,12 @@
         android:id="@+id/addAddressFragment"
         android:name="com.example.namnyam.ui.client.AddAddressFragment"
         android:label="AddAddressFragment" />
+
     <fragment
         android:id="@+id/profileFragment"
         android:name="com.example.namnyam.ui.client.ProfileFragment"
         android:label="ProfileFragment" />
-    <fragment
-        android:id="@+id/courierHomeFragment"
-        android:name="com.example.namnyam.ui.courier.CourierHomeFragment"
-        android:label="CourierHome" />
-    <fragment
-        android:id="@+id/orderDetailsFragment"
-        android:name="com.example.namnyam.ui.client.OrderDetailsFragment"
-        android:label="OrderDetailsFragment" />
+
     <fragment
         android:id="@+id/ordersHistoryFragment"
         android:name="com.example.namnyam.ui.client.OrdersHistoryFragment"
@@ -165,13 +144,44 @@
             android:id="@+id/action_ordersHistoryFragment_to_orderDetailsFragment"
             app:destination="@id/orderDetailsFragment" />
     </fragment>
+
     <fragment
-        android:id="@+id/checkoutFragment"
-        android:name="com.example.namnyam.ui.checkout.CheckoutFragment"
-        android:label="CheckoutFragment">
+        android:id="@+id/orderDetailsFragment"
+        android:name="com.example.namnyam.ui.client.OrderDetailsFragment"
+        android:label="OrderDetailsFragment" />
+
+    <fragment
+        android:id="@+id/ownerHomeFragment"
+        android:name="com.example.namnyam.ui.owner.OwnerHomeFragment"
+        android:label="OwnerHome">
         <action
-            android:id="@+id/action_checkoutFragment_to_orderDetailsFragment"
-            app:destination="@id/orderDetailsFragment" />
+            android:id="@+id/action_ownerHomeFragment_to_createRestaurantFragment"
+            app:destination="@id/createRestaurantFragment" />
+        <action
+            android:id="@+id/action_ownerHomeFragment_to_editRestaurantFragment"
+            app:destination="@id/editRestaurantFragment" />
+        <action
+            android:id="@+id/action_ownerHomeFragment_to_ownerProductsFragment"
+            app:destination="@id/ownerProductsFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/createRestaurantFragment"
+        android:name="com.example.namnyam.ui.owner.CreateRestaurantFragment"
+        android:label="CreateRestaurantFragment" />
+
+    <fragment
+        android:id="@+id/editRestaurantFragment"
+        android:name="com.example.namnyam.ui.owner.EditRestaurantFragment"
+        android:label="EditRestaurantFragment" />
+
+    <fragment
+        android:id="@+id/ownerProductsFragment"
+        android:name="com.example.namnyam.ui.owner.OwnerProductsFragment"
+        android:label="OwnerProductsFragment">
+        <action
+            android:id="@+id/action_ownerProductsFragment_to_editProductFragment"
+            app:destination="@id/editProductFragment" />
     </fragment>
 
     <fragment
@@ -184,27 +194,8 @@
             android:defaultValue="-1" />
     </fragment>
 
-    <action
-        android:id="@+id/action_ownerHomeFragment_to_ownerProductsFragment"
-        app:destination="@id/ownerProductsFragment" />
-
-    <action
-        android:id="@+id/action_ownerHomeFragment_to_editRestaurantFragment"
-        app:destination="@id/editRestaurantFragment" />
-
     <fragment
-        android:id="@+id/ownerProductsFragment"
-        android:name="com.example.namnyam.ui.owner.OwnerProductsFragment"
-        android:label="OwnerProductsFragment">
-        <action
-            android:id="@+id/action_ownerProductsFragment_to_editProductFragment"
-            app:destination="@id/editProductFragment" />
-    </fragment>
-
-
-    <fragment
-        android:id="@+id/editRestaurantFragment"
-        android:name="com.example.namnyam.ui.owner.EditRestaurantFragment"
-        android:label="EditRestaurantFragment" />
-
+        android:id="@+id/courierHomeFragment"
+        android:name="com.example.namnyam.ui.courier.CourierHomeFragment"
+        android:label="CourierHome" />
 </navigation>

@@ -16,7 +16,7 @@ class OwnerHomeViewModel(application: Application) : AndroidViewModel(applicatio
 
     var restaurantState: ((UiState<RestaurantDto>) -> Unit)? = null
     var ordersState: ((UiState<List<OrderDto>>) -> Unit)? = null
-    var actionState: ((UiState<OrderDto>) -> Unit)? = null
+    var actionState: ((UiState<Unit>) -> Unit)? = null
 
     private var restaurantLoaded = false
     private var ordersLoaded = false
@@ -139,8 +139,8 @@ class OwnerHomeViewModel(application: Application) : AndroidViewModel(applicatio
         actionState?.invoke(UiState.Loading)
         viewModelScope.launch {
             try {
-                val order = request()
-                actionState?.invoke(UiState.Success(order))
+                request()
+                actionState?.invoke(UiState.Success(Unit))
                 loadOrders(force = true)
             } catch (e: Exception) {
                 actionState?.invoke(
