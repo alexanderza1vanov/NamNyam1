@@ -34,8 +34,8 @@ class EditRestaurantViewModel(application: Application) : AndroidViewModel(appli
         saveState?.invoke(UiState.Loading)
         viewModelScope.launch {
             try {
-                val restaurant = repository.updateRestaurant(request)
-                saveState?.invoke(UiState.Success(restaurant))
+                val updated = repository.updateRestaurant(request)
+                saveState?.invoke(UiState.Success(updated))
             } catch (e: Exception) {
                 saveState?.invoke(
                     UiState.Error(e.message ?: "Не удалось обновить ресторан")
