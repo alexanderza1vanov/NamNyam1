@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.navigation.NavController
-import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.navOptions
 import com.example.namnyam.data.storage.TokenManager
 import com.example.namnyam.databinding.ActivityMainBinding
@@ -42,7 +42,10 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         tokenManager = TokenManager(this)
-        navController = findNavController(R.id.nav_host_fragment)
+
+        val navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+        navController = navHostFragment.navController
 
         setupBottomNavigation()
         observeNavigation()
@@ -76,7 +79,6 @@ class MainActivity : AppCompatActivity() {
     private fun observeNavigation() {
         navController.addOnDestinationChangedListener { _, destination, _ ->
             val role = getCurrentRole()
-
             applyMenuForRole(role)
 
             val shouldShowBottomNav = destination.id in visibleDestinationsForRole(role)

@@ -131,5 +131,33 @@ interface NamNyamApi {
     suspend fun deleteProduct(
         @Path("id") productId: Long
     ): Response<Unit>
+// COURIER
 
+    @GET("courier/orders")
+    suspend fun getCourierOrders(): List<OrderDto>
+
+    @GET("courier/orders/{id}")
+    suspend fun getCourierOrderById(
+        @Path("id") orderId: Long
+    ): OrderDto
+
+    @PUT("courier/orders/{id}/picked-up")
+    suspend fun pickUpCourierOrder(
+        @Path("id") orderId: Long
+    ): OrderDto
+
+    @PUT("courier/orders/{id}/on-the-way")
+    suspend fun moveCourierOrderOnTheWay(
+        @Path("id") orderId: Long
+    ): OrderDto
+
+    @PUT("courier/orders/{id}/delivered")
+    suspend fun deliverCourierOrder(
+        @Path("id") orderId: Long
+    ): OrderDto
+
+    @PUT("courier/orders/{id}/failed")
+    suspend fun failCourierOrder(
+        @Path("id") orderId: Long
+    ): OrderDto
 }
