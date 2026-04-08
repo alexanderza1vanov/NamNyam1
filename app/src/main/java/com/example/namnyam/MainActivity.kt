@@ -4,16 +4,16 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.navigation.NavController
-import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.findNavController
 import androidx.navigation.navOptions
-import com.example.namnyam.data.local.SessionManager
+import com.example.namnyam.data.storage.TokenManager
 import com.example.namnyam.databinding.ActivityMainBinding
 import java.util.Locale
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-    private lateinit var sessionManager: SessionManager
+    private lateinit var tokenManager: TokenManager
     private lateinit var navController: NavController
 
     private var currentMenuRes: Int? = null
@@ -38,15 +38,11 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        sessionManager = SessionManager(this)
-
-        val navHostFragment =
-            supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
-        navController = navHostFragment.navController
+        tokenManager = TokenManager(this)
+        navController = findNavController(R.id.nav_host_fragment)
 
         setupBottomNavigation()
         observeNavigation()
@@ -55,9 +51,7 @@ class MainActivity : AppCompatActivity() {
     private fun setupBottomNavigation() {
         binding.bottomNav.setOnItemSelectedListener { item ->
             val currentDestinationId = navController.currentDestination?.id
-            if (currentDestinationId == item.itemId) {
-                return@setOnItemSelectedListener true
-            }
+            if (currentDestinationId == item.itemId) return@setOnItemSelectedListener true
 
             val options = navOptions {
                 launchSingleTop = true
@@ -117,8 +111,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun getCurrentRole(): String {
-        return sessionManager.getUserRole()
-            .uppercase(Locale.ROOT)
-            .ifBlank { "CLIENT" }
+        return tokenManager.getUserRole()
+            ?.uppercase(Locale.ROOT)
+            ?.ifBlank { "CLIENT" }
+            ?: "CLIENT"
     }
 }
