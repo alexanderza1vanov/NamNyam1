@@ -9,7 +9,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.namnyam.R
-import com.example.namnyam.data.remote.dto.ProductDto
 import com.example.namnyam.databinding.FragmentOwnerProductsBinding
 import com.example.namnyam.utils.UiState
 
@@ -31,6 +30,18 @@ class OwnerProductsFragment : Fragment(R.layout.fragment_owner_products) {
         setupClicks()
         observeVm()
 
+        findNavController().currentBackStackEntry
+            ?.savedStateHandle
+            ?.getLiveData<Boolean>("owner_products_refresh")
+            ?.observe(viewLifecycleOwner) { shouldRefresh ->
+                if (shouldRefresh == true) {
+                    findNavController().currentBackStackEntry
+                        ?.savedStateHandle
+                        ?.remove<Boolean>("owner_products_refresh")
+                    viewModel.refresh()
+                }
+            }
+
         viewModel.loadInitial()
     }
 
@@ -46,6 +57,7 @@ class OwnerProductsFragment : Fragment(R.layout.fragment_owner_products) {
                 viewModel.deleteProduct(product.id)
             }
         )
+
         binding.recyclerProducts.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerProducts.adapter = adapter
     }
@@ -55,14 +67,14 @@ class OwnerProductsFragment : Fragment(R.layout.fragment_owner_products) {
             findNavController().navigateUp()
         }
 
-        binding.fabAddProduct.setOnClickListener {
+        binding.btnAddProduct.setOnClickListener {
             findNavController().navigate(
                 R.id.editProductFragment,
                 bundleOf("productId" to -1L)
             )
         }
 
-        binding.swipeRefresh.setOnRefreshListener {
+        binding.swipeRefreshProducts.setOnRefreshListener {
             viewModel.refresh()
         }
     }
@@ -72,43 +84,45 @@ class OwnerProductsFragment : Fragment(R.layout.fragment_owner_products) {
             when (state) {
                 UiState.Idle -> Unit
                 UiState.Loading -> {
-                    binding.progress.visibility = View.VISIBLE
+                    binding.progressProducts.visibility = View.VISIBLE
                     binding.recyclerProducts.visibility = View.GONE
-                    binding.tvEmpty.visibility = View.GONE
+                    binding.tvProductsEmpty.visibility = View.GONE
                 }
                 is UiState.Success -> {
-                    binding.progress.visibility = View.GONE
-                    binding.swipeRefresh.isRefreshing = false
+                    binding.progressProducts.visibility = View.GONE
+                    binding.swipeRefreshProducts.isRefreshing = false
+
                     adapter.submitList(state.data)
 
                     if (state.data.isEmpty()) {
                         binding.recyclerProducts.visibility = View.GONE
-                        binding.tvEmpty.visibility = View.VISIBLE
+                        binding.tvProductsEmpty.visibility = View.VISIBLE
                     } else {
                         binding.recyclerProducts.visibility = View.VISIBLE
-                        binding.tvEmpty.visibility = View.GONE
+                        binding.tvProductsEmpty.visibility = View.GONE
                     }
                 }
                 is UiState.Error -> {
-                    binding.progress.visibility = View.GONE
-                    binding.swipeRefresh.isRefreshing = false
+                    binding.progressProducts.visibility = View.GONE
+                    binding.swipeRefreshProducts.isRefreshing = false
                     binding.recyclerProducts.visibility = View.GONE
-                    binding.tvEmpty.visibility = View.VISIBLE
-                    binding.tvEmpty.text = state.message
-                }
+                    binding.tvProductsEmpty.visibility = View.VISIBLE
+                    binding.tvProductsEmpty.text = state.message}
             }
         }
 
         viewModel.deleteState = { state ->
             when (state) {
                 UiState.Idle -> Unit
-                UiState.Loading -> binding.swipeRefresh.isRefreshing = true
+                UiState.Loading -> {
+                    binding.swipeRefreshProducts.isRefreshing = true
+                }
                 is UiState.Success -> {
-                    binding.swipeRefresh.isRefreshing = false
+                    binding.swipeRefreshProducts.isRefreshing = false
                     Toast.makeText(requireContext(), "Блюдо удалено", Toast.LENGTH_SHORT).show()
                 }
                 is UiState.Error -> {
-                    binding.swipeRefresh.isRefreshing = false
+                    binding.swipeRefreshProducts.isRefreshing = false
                     Toast.makeText(requireContext(), state.message, Toast.LENGTH_SHORT).show()
                 }
             }

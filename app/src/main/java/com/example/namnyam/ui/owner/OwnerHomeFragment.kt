@@ -274,30 +274,27 @@ class OwnerHomeFragment : Fragment(R.layout.fragment_owner_home) {
         }
 
         binding.btnCreateRestaurant.setOnClickListener {
-            findNavController().navigate(R.id.createRestaurantFragment)
+            openCreateRestaurant()
         }
 
         binding.btnEditRestaurant.setOnClickListener {
-            findNavController().navigate(R.id.editRestaurantFragment)
+            val navController = findNavController()
+            if (navController.currentDestination?.id != R.id.ownerHomeFragment) return@setOnClickListener
+            navController.navigate(R.id.action_ownerHomeFragment_to_editRestaurantFragment)
         }
 
         binding.btnManageProducts.setOnClickListener {
-            findNavController().navigate(R.id.ownerProductsFragment)
+            val navController = findNavController()
+            if (navController.currentDestination?.id != R.id.ownerHomeFragment) return@setOnClickListener
+            navController.navigate(R.id.action_ownerHomeFragment_to_ownerProductsFragment)
         }
 
         binding.btnToggleRestaurant.setOnClickListener {
-            val restaurant = currentRestaurant ?: return@setOnClickListener
-            if (restaurant.isOpen) {
-                viewModel.closeRestaurant()
-            } else {
-                viewModel.openRestaurant()
-            }
+            viewModel.toggleRestaurantOpenState()
         }
     }
 
     private fun bindRestaurant(restaurant: RestaurantDto) {
-        currentRestaurant = restaurant
-
         binding.tvRestaurantName.text = restaurant.name
         binding.tvRestaurantAddress.text = restaurant.address
         binding.tvRestaurantPhone.text = "Телефон: ${restaurant.phone}"
@@ -305,12 +302,13 @@ class OwnerHomeFragment : Fragment(R.layout.fragment_owner_home) {
         val metaParts = mutableListOf<String>()
         metaParts.add(if (restaurant.isOpen) "Открыт" else "Закрыт")
 
-        restaurant.cuisineType?.takeIf { it.isNotBlank() }?.let {
-            metaParts.add(it)
+        val cuisine = restaurant.cuisineType
+        if (!cuisine.isNullOrBlank()) {
+            metaParts.add(cuisine)
         }
 
         restaurant.deliveryTimeMin?.let {
-            metaParts.add("Доставка $it мин")
+            metaParts.add("Доставка ${it} мин")
         }
 
         binding.tvRestaurantMeta.text = metaParts.joinToString(" • ")
@@ -318,7 +316,7 @@ class OwnerHomeFragment : Fragment(R.layout.fragment_owner_home) {
             "Доставка ${formatMoney(restaurant.deliveryFee)} • Мин. заказ ${formatMoney(restaurant.minOrderAmount)}"
 
         binding.tvRestaurantDescription.text =
-            restaurant.description?.takeIf { it.isNotBlank() } ?: "Описание отсутствует"
+            if (restaurant.description.isNullOrBlank()) "Описание отсутствует" else restaurant.description
 
         binding.btnToggleRestaurant.text =
             if (restaurant.isOpen) "Закрыть ресторан" else "Открыть ресторан"

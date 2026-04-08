@@ -149,4 +149,23 @@ class OwnerHomeViewModel(application: Application) : AndroidViewModel(applicatio
             }
         }
     }
+    fun toggleRestaurantOpenState() {
+        actionState?.invoke(UiState.Loading)
+        viewModelScope.launch {
+            try {
+                val restaurant = repository.getMyRestaurant()
+                if (restaurant.isOpen) {
+                    repository.closeMyRestaurant()
+                } else {
+                    repository.openMyRestaurant()
+                }
+                actionState?.invoke(UiState.Success(Unit))
+                refreshAll()
+            } catch (e: Exception) {
+                actionState?.invoke(
+                    UiState.Error(e.message ?: "Не удалось изменить статус ресторана")
+                )
+            }
+        }
+    }
 }

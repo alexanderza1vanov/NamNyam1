@@ -1,6 +1,7 @@
 package com.example.namnyam.ui.owner
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -32,13 +33,24 @@ class OwnerProductsAdapter(
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: ProductDto) {
-            binding.tvName.text = item.name
-            binding.tvPrice.text = formatMoney(item.price)
-            binding.tvDescription.text = item.description ?: "Без описания"
-            binding.tvAvailability.text = if (item.isAvailable) "Доступно" else "Недоступно"
+            binding.tvProductName.text = item.name
+            binding.tvProductPrice.text = formatMoney(item.price)
 
-            binding.btnEdit.setOnClickListener { onEditClick(item) }
-            binding.btnDelete.setOnClickListener { onDeleteClick(item) }
+            val meta = buildList {
+                item.weightGrams?.let { add("${it} г") }
+                add(if (item.isAvailable) "Доступно" else "Недоступно")
+            }.joinToString(" • ")
+
+            binding.tvProductMeta.text = meta
+            binding.tvProductDescription.text = item.description ?: "Без описания"
+            binding.tvProductIngredients.text = item.ingredients ?: "Ингредиенты не указаны"
+
+            binding.btnEditProduct.setOnClickListener { onEditClick(item) }
+            binding.btnDeleteProduct.setOnClickListener { onDeleteClick(item) }
+
+            binding.btnToggleAvailability.text =
+                if (item.isAvailable) "Скрыть" else "Показать"
+            binding.btnToggleAvailability.visibility = View.GONE
         }
     }
 
