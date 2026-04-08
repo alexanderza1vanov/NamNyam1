@@ -23,14 +23,10 @@ class OwnerHomeViewModel(application: Application) : AndroidViewModel(applicatio
     private var hasRestaurant = false
 
     fun loadInitial() {
-        if (restaurantLoaded) return
         loadRestaurant(force = true, loadOrdersAfterSuccess = true)
     }
 
     fun refreshAll() {
-        restaurantLoaded = false
-        ordersLoaded = false
-        hasRestaurant = false
         loadRestaurant(force = true, loadOrdersAfterSuccess = true)
     }
 
@@ -52,13 +48,26 @@ class OwnerHomeViewModel(application: Application) : AndroidViewModel(applicatio
                 if (loadOrdersAfterSuccess) {
                     loadOrders(force = true)
                 }
-            } catch (e: Exception) {
+            } catch (e: HttpException) {
                 hasRestaurant = false
                 restaurantLoaded = false
-                restaurantState?.invoke(UiState.Error(mapRestaurantError(e)))
 
-                ordersLoaded = true
-                ordersState?.invoke(UiState.Success(emptyList()))
+                if (e.code() == 400) {
+                    restaurantState?.invoke(
+                        UiState.Error("У вас пока нет ресторана. Создайте его.")
+                    )
+                    ordersLoaded = true
+                    ordersState?.invoke(UiState.Success(emptyList()))
+                } else {
+                    restaurantState?.invoke(
+                        UiState.Error(e.message ?: "Не удалось загрузить ресторан")
+                    )
+                }
+            } catch (e: Exception) {
+                hasRestaurant = false
+                restaurantState?.invoke(
+                    UiState.Error(e.message ?: "Не удалось загрузить ресторан")
+                )
             }
         }
     }
@@ -76,9 +85,7 @@ class OwnerHomeViewModel(application: Application) : AndroidViewModel(applicatio
 
         viewModelScope.launch {
             try {
-                val orders = repository.getOwnerOrders()
-                    .sortedByDescending { it.id }
-
+                val orders = repository.getOwnerOrders().sortedByDescending { it.id }
                 ordersLoaded = true
                 ordersState?.invoke(UiState.Success(orders))
             } catch (e: Exception) {
@@ -89,8 +96,31 @@ class OwnerHomeViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
 
-    fun confirmOrder(orderId: Long) {
-        updateOrder { repository.confirmOrder(orderId) }
+    fun openRestaurant() {
+        updateRestaurantState { repository.openMyRestaurant() }
+    }
+
+    fun closeRestaurant() {
+        updateRestaurantState { repository.closeMyRestaurant() }
+    }
+
+    private fun updateRestaurantState(request: suspend () -> RestaurantDto) {
+        restaurantState?.invoke(UiState.Loading)
+        viewModelScope.launch {
+            try {
+                val restaurant = request()
+                hasRestaurant = true
+                restaurantLoaded = true
+                restaurantState?.invoke(UiState.Success(restaurant))
+            } catch (e: Exception) {
+                restaurantState?.invoke(
+                    UiState.Error(e.message ?: "Не удалось обновить ресторан")
+                )
+            }
+        }
+    }
+
+    fun confirmOrder(orderId: Long) { updateOrder { repository.confirmOrder(orderId) }
     }
 
     fun startCooking(orderId: Long) {
@@ -107,7 +137,6 @@ class OwnerHomeViewModel(application: Application) : AndroidViewModel(applicatio
 
     private fun updateOrder(request: suspend () -> OrderDto) {
         actionState?.invoke(UiState.Loading)
-
         viewModelScope.launch {
             try {
                 val order = request()
@@ -119,34 +148,5 @@ class OwnerHomeViewModel(application: Application) : AndroidViewModel(applicatio
                 )
             }
         }
-    }
-
-    private fun mapRestaurantError(e: Exception): String {
-        return when ((e as? HttpException)?.code()) {
-            404 -> "У вас пока нет ресторана. Создайте его, чтобы принимать заказы."
-            403 -> "Только владелец может просматривать свой ресторан."
-            else -> e.message ?: "Не удалось загрузить ресторан"
-        }
-    }
-
-    fun getStatusText(status: String): String {
-        return when (status) {
-            "CREATED" -> "Создан"
-            "CONFIRMED" -> "Подтверждён"
-            "COOKING" -> "Готовится"
-            "READY_FOR_DELIVERY" -> "Готов к выдаче"
-            "ASSIGNED_TO_COURIER" -> "Передан курьеру"
-            "PICKED_UP" -> "Курьер забрал заказ"
-            "ON_THE_WAY" -> "В пути"
-            "DELIVERED" -> "Доставлен"
-            "CANCELLED" -> "Отменён"
-            else -> status
-        }
-    }
-
-    fun formatCreatedAt(createdAt: String): String {
-        return createdAt
-            .replace("T", " ")
-            .replace("Z", "")
     }
 }

@@ -266,4 +266,61 @@ class OwnerHomeFragment : Fragment(R.layout.fragment_owner_home) {
         _binding = null
         super.onDestroyView()
     }
+    private var currentRestaurant: RestaurantDto? = null
+
+    private fun setupListeners() {
+        binding.swipeRefresh.setOnRefreshListener {
+            viewModel.refreshAll()
+        }
+
+        binding.btnCreateRestaurant.setOnClickListener {
+            findNavController().navigate(R.id.createRestaurantFragment)
+        }
+
+        binding.btnEditRestaurant.setOnClickListener {
+            findNavController().navigate(R.id.editRestaurantFragment)
+        }
+
+        binding.btnManageProducts.setOnClickListener {
+            findNavController().navigate(R.id.ownerProductsFragment)
+        }
+
+        binding.btnToggleRestaurant.setOnClickListener {
+            val restaurant = currentRestaurant ?: return@setOnClickListener
+            if (restaurant.isOpen) {
+                viewModel.closeRestaurant()
+            } else {
+                viewModel.openRestaurant()
+            }
+        }
+    }
+
+    private fun bindRestaurant(restaurant: RestaurantDto) {
+        currentRestaurant = restaurant
+
+        binding.tvRestaurantName.text = restaurant.name
+        binding.tvRestaurantAddress.text = restaurant.address
+        binding.tvRestaurantPhone.text = "Телефон: ${restaurant.phone}"
+
+        val metaParts = mutableListOf<String>()
+        metaParts.add(if (restaurant.isOpen) "Открыт" else "Закрыт")
+
+        restaurant.cuisineType?.takeIf { it.isNotBlank() }?.let {
+            metaParts.add(it)
+        }
+
+        restaurant.deliveryTimeMin?.let {
+            metaParts.add("Доставка $it мин")
+        }
+
+        binding.tvRestaurantMeta.text = metaParts.joinToString(" • ")
+        binding.tvRestaurantDelivery.text =
+            "Доставка ${formatMoney(restaurant.deliveryFee)} • Мин. заказ ${formatMoney(restaurant.minOrderAmount)}"
+
+        binding.tvRestaurantDescription.text =
+            restaurant.description?.takeIf { it.isNotBlank() } ?: "Описание отсутствует"
+
+        binding.btnToggleRestaurant.text =
+            if (restaurant.isOpen) "Закрыть ресторан" else "Открыть ресторан"
+    }
 }

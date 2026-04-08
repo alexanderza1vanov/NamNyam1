@@ -119,6 +119,13 @@
         <action
             android:id="@+id/action_ownerHomeFragment_to_createRestaurantFragment"
             app:destination="@id/createRestaurantFragment" />
+        <action
+            android:id="@+id/action_ownerHomeFragment_to_editRestaurantFragment"
+            app:destination="@id/editRestaurantFragment" />
+
+        <action
+            android:id="@+id/action_ownerHomeFragment_to_ownerProductsFragment"
+            app:destination="@id/ownerProductsFragment" />
     </fragment>
 
     <fragment
@@ -166,4 +173,38 @@
             android:id="@+id/action_checkoutFragment_to_orderDetailsFragment"
             app:destination="@id/orderDetailsFragment" />
     </fragment>
+
+    <fragment
+        android:id="@+id/editProductFragment"
+        android:name="com.example.namnyam.ui.owner.EditProductFragment"
+        android:label="EditProductFragment">
+        <argument
+            android:name="productId"
+            app:argType="long"
+            android:defaultValue="-1" />
+    </fragment>
+
+    <action
+        android:id="@+id/action_ownerHomeFragment_to_ownerProductsFragment"
+        app:destination="@id/ownerProductsFragment" />
+
+    <action
+        android:id="@+id/action_ownerHomeFragment_to_editRestaurantFragment"
+        app:destination="@id/editRestaurantFragment" />
+
+    <fragment
+        android:id="@+id/ownerProductsFragment"
+        android:name="com.example.namnyam.ui.owner.OwnerProductsFragment"
+        android:label="OwnerProductsFragment">
+        <action
+            android:id="@+id/action_ownerProductsFragment_to_editProductFragment"
+            app:destination="@id/editProductFragment" />
+    </fragment>
+
+
+    <fragment
+        android:id="@+id/editRestaurantFragment"
+        android:name="com.example.namnyam.ui.owner.EditRestaurantFragment"
+        android:label="EditRestaurantFragment" />
+
 </navigation>

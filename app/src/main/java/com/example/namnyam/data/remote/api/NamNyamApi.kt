@@ -3,6 +3,7 @@ package com.example.namnyam.data.remote.api
 import com.example.namnyam.data.remote.dto.AuthResponseDto
 import com.example.namnyam.data.remote.dto.CreateAddressRequest
 import com.example.namnyam.data.remote.dto.CreateOrderRequest
+import com.example.namnyam.data.remote.dto.CreateProductRequest
 import com.example.namnyam.data.remote.dto.DeliveryAddressDto
 import com.example.namnyam.data.remote.dto.LoginRequestDto
 import com.example.namnyam.data.remote.dto.OrderDto
@@ -11,6 +12,8 @@ import com.example.namnyam.data.remote.dto.RegisterRequestDto
 import com.example.namnyam.data.remote.dto.RestaurantDto
 import retrofit2.Response
 import com.example.namnyam.data.remote.dto.CreateRestaurantRequest
+import com.example.namnyam.data.remote.dto.UpdateProductRequest
+import com.example.namnyam.data.remote.dto.UpdateRestaurantRequest
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
@@ -96,4 +99,37 @@ interface NamNyamApi {
     suspend fun createRestaurant(
         @Body request: CreateRestaurantRequest
     ): RestaurantDto
+
+    @PUT("restaurants/my")
+    suspend fun updateMyRestaurant(
+        @Body request: UpdateRestaurantRequest
+    ): RestaurantDto
+
+    @PUT("restaurants/my/open")
+    suspend fun openMyRestaurant(): RestaurantDto
+
+    @PUT("restaurants/my/close")
+    suspend fun closeMyRestaurant(): RestaurantDto
+
+    @GET("products/{id}")
+    suspend fun getProductById(
+        @Path("id") productId: Long
+    ): ProductDto
+
+    @POST("products")
+    suspend fun createProduct(
+        @Body request: CreateProductRequest
+    ): ProductDto
+
+    @PUT("products/{id}")
+    suspend fun updateProduct(
+        @Path("id") productId: Long,
+        @Body request: UpdateProductRequest
+    ): ProductDto
+
+    @DELETE("products/{id}")
+    suspend fun deleteProduct(
+        @Path("id") productId: Long
+    ): Response<Unit>
+
 }
