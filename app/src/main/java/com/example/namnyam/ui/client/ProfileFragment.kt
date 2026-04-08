@@ -6,6 +6,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.namnyam.R
+//import com.example.namnyam.data.cart.CartStore
 import com.example.namnyam.data.local.SessionManager
 import com.example.namnyam.data.storage.TokenManager
 import com.example.namnyam.databinding.FragmentProfileBinding
@@ -18,6 +19,10 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
     private lateinit var sessionManager: SessionManager
     private lateinit var tokenManager: TokenManager
 
+    private enum class AppRole {
+        CLIENT, OWNER, COURIER
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentProfileBinding.bind(view)
@@ -25,32 +30,104 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
         sessionManager = SessionManager(requireContext())
         tokenManager = TokenManager(requireContext())
 
-        setupUserInfo()
-        setupClicks()
+        setupToolbar()
+
+        val role = setupUserInfo()
+        setupRoleActions(role)
+        setupCommonActions()
     }
 
-    private fun setupUserInfo() {
+    private fun setupToolbar() {
+        binding.toolbar.title = "Профиль"
+        binding.toolbar.setNavigationOnClickListener {
+            findNavController().navigateUp()
+        }
+    }
+
+
+
+    private fun setupUserInfo(): AppRole {
         val userName = sessionManager.getUserName().ifBlank { "Пользователь" }
         val userEmail = sessionManager.getUserEmail().ifBlank { "Email не указан" }
 
         val roleFromSession = sessionManager.getUserRole()
         val roleFromToken = tokenManager.getUserRole().orEmpty()
-        val userRole = if (roleFromSession.isNotBlank()) roleFromSession else roleFromToken
+        val rawRole = if (roleFromSession.isNotBlank()) roleFromSession else roleFromToken
+
+        val role = when (rawRole.uppercase()) {
+            "OWNER" -> AppRole.OWNER
+            "COURIER" -> AppRole.COURIER
+            else -> AppRole.CLIENT
+        }
 
         binding.tvUserName.text = userName
         binding.tvUserEmail.text = userEmail
-        binding.tvUserRole.text = mapRole(userRole.ifBlank { "CLIENT" })
+        binding.tvUserRole.text = mapRole(role)
+
+        return role
     }
 
-    private fun setupClicks() {
-        binding.itemOrders.setOnClickListener {
-            findNavController().navigate(R.id.ordersHistoryFragment)
-        }
+    private fun setupRoleActions(role: AppRole) {
+        when (role) {
+            AppRole.CLIENT -> {
+                binding.tvActionsTitle.text = "Разделы клиента"
 
-        binding.itemAddresses.setOnClickListener {
-            findNavController().navigate(R.id.addressesFragment)
-        }
+                binding.itemPrimary.visibility = View.VISIBLE
+                binding.itemSecondary.visibility = View.VISIBLE
 
+                binding.tvPrimaryTitle.text = "История заказов"
+                binding.tvPrimarySubtitle.text = "Просмотр оформленных заказов"
+
+                binding.tvSecondaryTitle.text = "Мои адреса"
+                binding.tvSecondarySubtitle.text = "Управление адресами доставки"
+
+                binding.itemPrimary.setOnClickListener {
+                    findNavController().navigate(R.id.ordersHistoryFragment)
+                }
+
+                binding.itemSecondary.setOnClickListener {
+                    findNavController().navigate(R.id.addressesFragment)
+                }
+            }
+
+            AppRole.OWNER -> {
+                binding.tvActionsTitle.text = "Разделы владельца"
+
+                binding.itemPrimary.visibility = View.VISIBLE
+                binding.itemSecondary.visibility = View.VISIBLE
+
+                binding.tvPrimaryTitle.text = "Панель владельца"
+                binding.tvPrimarySubtitle.text = "Заказы, статус ресторана, управление"
+
+                binding.tvSecondaryTitle.text = "Блюда ресторана"
+                binding.tvSecondarySubtitle.text = "Добавление и редактирование меню"
+
+                binding.itemPrimary.setOnClickListener {
+                    findNavController().navigate(R.id.ownerHomeFragment)
+                }
+
+                binding.itemSecondary.setOnClickListener {
+                    findNavController().navigate(R.id.ownerProductsFragment)
+                }
+            }
+
+            AppRole.COURIER -> {
+                binding.tvActionsTitle.text = "Разделы курьера"
+
+                binding.itemPrimary.visibility = View.VISIBLE
+                binding.itemSecondary.visibility = View.GONE
+
+                binding.tvPrimaryTitle.text = "Панель курьера"
+                binding.tvPrimarySubtitle.text = "Текущие и доступные доставки"
+
+                binding.itemPrimary.setOnClickListener {
+                    findNavController().navigate(R.id.courierHomeFragment)
+                }
+            }
+        }
+    }
+
+    private fun setupCommonActions() {
         binding.itemLogout.setOnClickListener {
             logout()
         }
@@ -70,12 +147,11 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
         findNavController().navigate(R.id.loginFragment)
     }
 
-    private fun mapRole(role: String): String {
+    private fun mapRole(role: AppRole): String {
         return when (role) {
-            "CLIENT" -> "Клиент"
-            "OWNER" -> "Владелец"
-            "COURIER" -> "Курьер"
-            else -> role
+            AppRole.CLIENT -> "Клиент"
+            AppRole.OWNER -> "Владелец"
+            AppRole.COURIER -> "Курьер"
         }
     }
 

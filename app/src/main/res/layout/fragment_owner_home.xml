@@ -10,10 +10,12 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:paddingHorizontal="8dp"
+        android:paddingTop="30dp"
         android:titleTextColor="@android:color/black" />
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipeRefresh"
+        android:paddingTop="10dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 

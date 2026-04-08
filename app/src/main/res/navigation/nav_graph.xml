@@ -154,12 +154,11 @@
         android:id="@+id/ownerHomeFragment"
         android:name="com.example.namnyam.ui.owner.OwnerHomeFragment"
         android:label="OwnerHome">
+
         <action
             android:id="@+id/action_ownerHomeFragment_to_createRestaurantFragment"
             app:destination="@id/createRestaurantFragment" />
-        <action
-            android:id="@+id/action_ownerHomeFragment_to_editRestaurantFragment"
-            app:destination="@id/editRestaurantFragment" />
+
         <action
             android:id="@+id/action_ownerHomeFragment_to_ownerProductsFragment"
             app:destination="@id/ownerProductsFragment" />
@@ -198,4 +197,7 @@
         android:id="@+id/courierHomeFragment"
         android:name="com.example.namnyam.ui.courier.CourierHomeFragment"
         android:label="CourierHome" />
+
+
+
 </navigation>

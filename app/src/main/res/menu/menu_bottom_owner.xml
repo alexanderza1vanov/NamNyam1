@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/ownerHomeFragment"
+        android:icon="@android:drawable/ic_menu_manage"
+        android:title="Панель" />
+
+    <item
+        android:id="@+id/ownerProductsFragment"
+        android:icon="@android:drawable/ic_menu_sort_by_size"
+        android:title="Блюда" />
+
+    <item
+        android:id="@+id/profileFragment"
+        android:icon="@android:drawable/ic_menu_myplaces"
+        android:title="Профиль" />
+</menu>
