@@ -30,21 +30,21 @@ class CartFragment : Fragment(R.layout.fragment_cart) {
 
         deliveryFee = arguments?.getDouble("deliveryFee") ?: 199.0
 
-        setupToolbar()
+//        setupToolbar()
         setupRecycler()
         setupActions()
         loadCart()
         renderCart()
     }
 
-    private fun setupToolbar() {
-        binding.toolbar.navigationIcon =
-            ContextCompat.getDrawable(requireContext(), R.drawable.ic_arrow_back_24)
-
-        binding.toolbar.setNavigationOnClickListener {
-            findNavController().navigateUp()
-        }
-    }
+//    private fun setupToolbar() {
+//        binding.toolbar.navigationIcon =
+//            ContextCompat.getDrawable(requireContext(), R.drawable.ic_arrow_back_24)
+//
+//        binding.toolbar.setNavigationOnClickListener {
+//            findNavController().navigateUp()
+//        }
+//    }
 
     private fun setupRecycler() {
         adapter = CartAdapter(

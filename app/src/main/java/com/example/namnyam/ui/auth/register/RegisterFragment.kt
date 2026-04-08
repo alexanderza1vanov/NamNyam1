@@ -28,12 +28,12 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
 
         viewModel = ViewModelProvider(this)[RegisterViewModel::class.java]
 
-        binding.toolbar.navigationIcon =
-            ContextCompat.getDrawable(requireContext(), R.drawable.ic_arrow_back_24)
-
-        binding.toolbar.setNavigationOnClickListener {
-            findNavController().navigateUp()
-        }
+//        binding.toolbar.navigationIcon =
+//            ContextCompat.getDrawable(requireContext(), R.drawable.ic_arrow_back_24)
+//
+//        binding.toolbar.setNavigationOnClickListener {
+//            findNavController().navigateUp()
+//        }
 
         binding.spRole.adapter = ArrayAdapter(
             requireContext(),

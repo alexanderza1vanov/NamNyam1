@@ -9,15 +9,6 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:backgroundTint="#FFFFFF"
-            android:minHeight="?attr/actionBarSize"
-            android:paddingTop="0dp"
-            android:title="Регистрация"
-            android:titleTextColor="#111111" />
 
         <ScrollView
             android:layout_width="match_parent"

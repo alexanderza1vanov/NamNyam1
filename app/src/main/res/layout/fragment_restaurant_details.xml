@@ -17,7 +17,6 @@
             android:backgroundTint="#FFFFFF"
             android:minHeight="?attr/actionBarSize"
             android:paddingTop="30dp"
-            app:menu="@menu/menu_restaurant"
             app:title="Меню ресторана"
             app:titleTextColor="#111111" />
 

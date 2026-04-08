@@ -29,7 +29,7 @@ class OwnerHomeFragment : Fragment(R.layout.fragment_owner_home) {
 
         viewModel = ViewModelProvider(this)[OwnerHomeViewModel::class.java]
 
-        setupToolbar()
+//        setupToolbar()
         setupOrdersList()
         setupListeners()
         observeViewModel()
@@ -57,23 +57,23 @@ class OwnerHomeFragment : Fragment(R.layout.fragment_owner_home) {
         }
     }
 
-    private fun setupToolbar() {
-        binding.toolbar.title = "Панель владельца"
-        binding.toolbar.menu.clear()
-        binding.toolbar.inflateMenu(R.menu.menu_profile_only)
-        binding.toolbar.setOnMenuItemClickListener { item ->
-            when (item.itemId) {
-                R.id.action_profile -> {
-                    val navController = findNavController()
-                    if (navController.currentDestination?.id == R.id.ownerHomeFragment) {
-                        navController.navigate(R.id.profileFragment)
-                    }
-                    true
-                }
-                else -> false
-            }
-        }
-    }
+//    private fun setupToolbar() {
+//        binding.toolbar.title = "Панель владельца"
+//        binding.toolbar.menu.clear()
+//        binding.toolbar.inflateMenu(R.menu.menu_profile_only)
+//        binding.toolbar.setOnMenuItemClickListener { item ->
+//            when (item.itemId) {
+//                R.id.action_profile -> {
+//                    val navController = findNavController()
+//                    if (navController.currentDestination?.id == R.id.ownerHomeFragment) {
+//                        navController.navigate(R.id.profileFragment)
+//                    }
+//                    true
+//                }
+//                else -> false
+//            }
+//        }
+//    }
 
     private fun setupOrdersList() {
         ordersAdapter = OwnerOrdersAdapter(

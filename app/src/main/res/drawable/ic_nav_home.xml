@@ -1,0 +1,35 @@
+<!-- res/drawable/ic_restaurant_building.xml -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24"
+    android:tint="?attr/colorControlNormal">
+
+    <!-- Крыша здания -->
+    <path
+        android:fillColor="@android:color/black"
+        android:pathData="M12,3L2,12h3v8h6v-6h2v6h6v-8h3L12,3z"/>
+
+    <!-- Окна / двери -->
+    <path
+        android:fillColor="@android:color/white"
+        android:pathData="M7,14h2v2H7v-2zM15,14h2v2h-2v-2z"
+        android:fillAlpha="0.9"/>
+
+    <!-- Навес над входом (характерный элемент ресторана) -->
+    <path
+        android:fillColor="@android:color/black"
+        android:pathData="M9,12h6v1.5c0,0.28 -0.22,0.5 -0.5,0.5h-5c-0.28,0 -0.5,-0.22 -0.5,-0.5V12z"/>
+
+    <!-- Вывеска с вилкой и ножом 🍴 -->
+    <path
+        android:fillColor="@android:color/white"
+        android:pathData="M11,6.5c0,-0.28 0.22,-0.5 0.5,-0.5h1c0.28,0 0.5,0.22 0.5,0.5V9h1V6.5c0,-0.83 -0.67,-1.5 -1.5,-1.5h-1C10.67,5 10,5.67 10,6.5V9h1V6.5zM8,7h1v2H8V7zM14,7h1v2h-1V7z"/>
+
+    <!-- Декоративная полоса на фасаде -->
+    <path
+        android:fillColor="@android:color/black"
+        android:pathData="M4,11h16v1H4z"
+        android:fillAlpha="0.7"/>
+</vector>

@@ -16,8 +16,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:backgroundTint="#FFFFFF"
-            android:paddingTop="30dp"
-            app:navigationIcon="@drawable/ic_arrow_back_24"
+            android:padding="30dp"
             app:title="Мои адреса"
             app:titleTextColor="#111111" />
 

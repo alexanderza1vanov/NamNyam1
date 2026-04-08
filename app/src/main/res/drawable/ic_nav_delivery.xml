@@ -1,0 +1,39 @@
+<!-- res/drawable/ic_courier_walk.xml -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24"
+    android:tint="?attr/colorControlNormal">
+
+    <!-- 👤 Голова -->
+    <path
+        android:fillColor="@android:color/white"
+        android:pathData="M12,3c1.1,0 2,0.9 2,2s-0.9,2 -2,2s-2,-0.9 -2,-2s0.9,-2 2,-2z"/>
+
+    <!-- 👕 Тело -->
+    <path
+        android:fillColor="@android:color/white"
+        android:pathData="M10.5,6h3v5h-3z"/>
+
+    <!-- 🦶 Ноги в движении (шаг) -->
+    <path
+        android:fillColor="@android:color/white"
+        android:pathData="M10.5,11l-2,6h2.2l1.3,-4l1.3,4h2.2l-2,-6z"/>
+
+    <!-- 🎒 Термосумка на спине -->
+    <path
+        android:fillColor="@android:color/white"
+        android:pathData="M14.5,7h3.5v6h-3.5z"/>
+
+    <!-- 📦 Детали сумки (отделение/ремешок) -->
+    <path
+        android:fillColor="@android:color/white"
+        android:fillAlpha="0.75"
+        android:pathData="M14.5,8h3.5v1.5h-3.5z"/>
+
+    <!-- 🔗 Лямка через плечо -->
+    <path
+        android:fillColor="@android:color/white"
+        android:pathData="M12.5,6.5h2v1h-2z"/>
+</vector>

@@ -25,12 +25,12 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 
         viewModel = ViewModelProvider(this)[LoginViewModel::class.java]
 
-        binding.toolbar.navigationIcon =
-            ContextCompat.getDrawable(requireContext(), R.drawable.ic_arrow_back_24)
+//        binding.toolbar.navigationIcon =
+//            ContextCompat.getDrawable(requireContext(), R.drawable.ic_arrow_back_24)
 
-        binding.toolbar.setNavigationOnClickListener {
-            findNavController().navigateUp()
-        }
+//        binding.toolbar.setNavigationOnClickListener {
+//            findNavController().navigateUp()
+//        }
 
         binding.btnLogin.setOnClickListener {
             val email = binding.etEmail.text.toString().trim()

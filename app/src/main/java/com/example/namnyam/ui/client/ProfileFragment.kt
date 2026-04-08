@@ -30,19 +30,19 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
         sessionManager = SessionManager(requireContext())
         tokenManager = TokenManager(requireContext())
 
-        setupToolbar()
+//        setupToolbar()
 
         val role = setupUserInfo()
         setupRoleActions(role)
         setupCommonActions()
     }
 
-    private fun setupToolbar() {
-        binding.toolbar.title = "Профиль"
-        binding.toolbar.setNavigationOnClickListener {
-            findNavController().navigateUp()
-        }
-    }
+//    private fun setupToolbar() {
+//        binding.toolbar.title = "Профиль"
+//        binding.toolbar.setNavigationOnClickListener {
+//            findNavController().navigateUp()
+//        }
+//    }
 
 
 
