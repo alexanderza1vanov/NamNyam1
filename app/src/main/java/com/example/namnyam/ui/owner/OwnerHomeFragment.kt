@@ -25,8 +25,8 @@ class OwnerHomeFragment : Fragment(R.layout.fragment_owner_home) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         _binding = FragmentOwnerHomeBinding.bind(view)
+
         viewModel = ViewModelProvider(this)[OwnerHomeViewModel::class.java]
 
         setupToolbar()
@@ -37,27 +37,30 @@ class OwnerHomeFragment : Fragment(R.layout.fragment_owner_home) {
         viewModel.loadInitial()
     }
 
+    override fun onResume() {
+        super.onResume()
+
+        val handle = findNavController().currentBackStackEntry?.savedStateHandle ?: return
+        val created = handle.get<Boolean>("restaurant_created") ?: false
+
+        if (created) {
+            handle.remove<Boolean>("restaurant_created")
+            Toast.makeText(requireContext(), "Ресторан создан", Toast.LENGTH_SHORT).show()
+            viewModel.refreshAll()
+        }
+    }
+
     private fun setupToolbar() {
         binding.toolbar.title = "Панель владельца"
     }
 
     private fun setupOrdersList() {
         ordersAdapter = OwnerOrdersAdapter(
-            onOrderClick = { order ->
-                openOrderDetails(order.id)
-            },
-            onConfirmClick = { order ->
-                viewModel.confirmOrder(order.id)
-            },
-            onCookingClick = { order ->
-                viewModel.startCooking(order.id)
-            },
-            onReadyClick = { order ->
-                viewModel.markReady(order.id)
-            },
-            onCancelClick = { order ->
-                viewModel.cancelOrder(order.id)
-            }
+            onOrderClick = { order -> openOrderDetails(order.id) },
+            onConfirmClick = { order -> viewModel.confirmOrder(order.id) },
+            onCookingClick = { order -> viewModel.startCooking(order.id) },
+            onReadyClick = { order -> viewModel.markReady(order.id) },
+            onCancelClick = { order -> viewModel.cancelOrder(order.id) }
         )
 
         binding.recyclerOrders.layoutManager = LinearLayoutManager(requireContext())
@@ -68,6 +71,10 @@ class OwnerHomeFragment : Fragment(R.layout.fragment_owner_home) {
     private fun setupListeners() {
         binding.swipeRefresh.setOnRefreshListener {
             viewModel.refreshAll()
+        }
+
+        binding.btnCreateRestaurant.setOnClickListener {
+            openCreateRestaurant()
         }
     }
 
@@ -99,7 +106,7 @@ class OwnerHomeFragment : Fragment(R.layout.fragment_owner_home) {
                 binding.progressRestaurant.visibility = View.GONE
                 binding.layoutRestaurantEmpty.visibility = View.GONE
                 binding.cardRestaurant.visibility = View.VISIBLE
-
+                setOrdersSectionVisible(true)
                 bindRestaurant(state.data)
             }
 
@@ -108,7 +115,11 @@ class OwnerHomeFragment : Fragment(R.layout.fragment_owner_home) {
                 binding.cardRestaurant.visibility = View.GONE
                 binding.layoutRestaurantEmpty.visibility = View.VISIBLE
                 binding.tvRestaurantEmpty.text =
-                    state.message.ifBlank { "Ресторан владельца не найден" }
+                    state.message.ifBlank { "У вас пока нет ресторана" }
+
+                ordersAdapter.submitList(emptyList())
+                binding.swipeRefresh.isRefreshing = false
+                setOrdersSectionVisible(false)
             }
         }
     }
@@ -216,6 +227,24 @@ class OwnerHomeFragment : Fragment(R.layout.fragment_owner_home) {
         }
     }
 
+    private fun setOrdersSectionVisible(visible: Boolean) {
+        val sectionVisibility = if (visible) View.VISIBLE else View.GONE
+        binding.tvOrdersTitle.visibility = sectionVisibility
+
+        if (!visible) {
+            binding.progressOrders.visibility = View.GONE
+            binding.recyclerOrders.visibility = View.GONE
+            binding.tvOrdersEmpty.visibility = View.GONE
+        }
+    }
+
+    private fun openCreateRestaurant() {
+        val navController = findNavController()
+        if (navController.currentDestination?.id != R.id.ownerHomeFragment) return
+
+        navController.navigate(R.id.action_ownerHomeFragment_to_createRestaurantFragment)
+    }
+
     private fun openOrderDetails(orderId: Long) {
         val navController = findNavController()
         if (navController.currentDestination?.id != R.id.ownerHomeFragment) return
@@ -234,7 +263,6 @@ class OwnerHomeFragment : Fragment(R.layout.fragment_owner_home) {
         viewModel.restaurantState = null
         viewModel.ordersState = null
         viewModel.actionState = null
-
         _binding = null
         super.onDestroyView()
     }

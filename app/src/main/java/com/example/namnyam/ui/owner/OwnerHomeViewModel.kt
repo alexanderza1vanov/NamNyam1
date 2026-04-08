@@ -8,6 +8,7 @@ import com.example.namnyam.data.remote.dto.RestaurantDto
 import com.example.namnyam.data.repository.OwnerRepository
 import com.example.namnyam.utils.UiState
 import kotlinx.coroutines.launch
+import retrofit2.HttpException
 
 class OwnerHomeViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -19,22 +20,24 @@ class OwnerHomeViewModel(application: Application) : AndroidViewModel(applicatio
 
     private var restaurantLoaded = false
     private var ordersLoaded = false
+    private var hasRestaurant = false
 
     fun loadInitial() {
-        if (!restaurantLoaded) {
-            loadRestaurant()
-        }
-        if (!ordersLoaded) {
-            loadOrders()
-        }
+        if (restaurantLoaded) return
+        loadRestaurant(force = true, loadOrdersAfterSuccess = true)
     }
 
     fun refreshAll() {
-        loadRestaurant(force = true)
-        loadOrders(force = true)
+        restaurantLoaded = false
+        ordersLoaded = false
+        hasRestaurant = false
+        loadRestaurant(force = true, loadOrdersAfterSuccess = true)
     }
 
-    fun loadRestaurant(force: Boolean = false) {
+    fun loadRestaurant(
+        force: Boolean = false,
+        loadOrdersAfterSuccess: Boolean = false
+    ) {
         if (restaurantLoaded && !force) return
 
         restaurantState?.invoke(UiState.Loading)
@@ -42,17 +45,31 @@ class OwnerHomeViewModel(application: Application) : AndroidViewModel(applicatio
         viewModelScope.launch {
             try {
                 val restaurant = repository.getMyRestaurant()
+                hasRestaurant = true
                 restaurantLoaded = true
                 restaurantState?.invoke(UiState.Success(restaurant))
+
+                if (loadOrdersAfterSuccess) {
+                    loadOrders(force = true)
+                }
             } catch (e: Exception) {
-                restaurantState?.invoke(
-                    UiState.Error(e.message ?: "Не удалось загрузить ресторан")
-                )
+                hasRestaurant = false
+                restaurantLoaded = false
+                restaurantState?.invoke(UiState.Error(mapRestaurantError(e)))
+
+                ordersLoaded = true
+                ordersState?.invoke(UiState.Success(emptyList()))
             }
         }
     }
 
     fun loadOrders(force: Boolean = false) {
+        if (!hasRestaurant) {
+            ordersLoaded = true
+            ordersState?.invoke(UiState.Success(emptyList()))
+            return
+        }
+
         if (ordersLoaded && !force) return
 
         ordersState?.invoke(UiState.Loading)
@@ -101,6 +118,14 @@ class OwnerHomeViewModel(application: Application) : AndroidViewModel(applicatio
                     UiState.Error(e.message ?: "Не удалось обновить статус заказа")
                 )
             }
+        }
+    }
+
+    private fun mapRestaurantError(e: Exception): String {
+        return when ((e as? HttpException)?.code()) {
+            404 -> "У вас пока нет ресторана. Создайте его, чтобы принимать заказы."
+            403 -> "Только владелец может просматривать свой ресторан."
+            else -> e.message ?: "Не удалось загрузить ресторан"
         }
     }
 

@@ -1,6 +1,7 @@
 package com.example.namnyam.data.repository
 
 import android.content.Context
+import com.example.namnyam.data.remote.dto.CreateRestaurantRequest
 import com.example.namnyam.data.remote.dto.OrderDto
 import com.example.namnyam.data.remote.dto.RestaurantDto
 import com.example.namnyam.data.remote.network.RetrofitProvider
@@ -11,6 +12,10 @@ class OwnerRepository(context: Context) {
 
     suspend fun getMyRestaurant(): RestaurantDto {
         return api.getMyRestaurant()
+    }
+
+    suspend fun createRestaurant(request: CreateRestaurantRequest): RestaurantDto {
+        return api.createRestaurant(request)
     }
 
     suspend fun getOwnerOrders(): List<OrderDto> {

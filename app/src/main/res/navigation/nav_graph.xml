@@ -114,7 +114,17 @@
     <fragment
         android:id="@+id/ownerHomeFragment"
         android:name="com.example.namnyam.ui.owner.OwnerHomeFragment"
-        android:label="OwnerHome" />
+        android:label="OwnerHome">
+
+        <action
+            android:id="@+id/action_ownerHomeFragment_to_createRestaurantFragment"
+            app:destination="@id/createRestaurantFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/createRestaurantFragment"
+        android:name="com.example.namnyam.ui.owner.CreateRestaurantFragment"
+        android:label="CreateRestaurantFragment" />
     <fragment
         android:id="@+id/addressesFragment"
         android:name="com.example.namnyam.ui.client.AddressesFragment"

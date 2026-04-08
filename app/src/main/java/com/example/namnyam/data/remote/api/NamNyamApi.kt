@@ -10,6 +10,7 @@ import com.example.namnyam.data.remote.dto.ProductDto
 import com.example.namnyam.data.remote.dto.RegisterRequestDto
 import com.example.namnyam.data.remote.dto.RestaurantDto
 import retrofit2.Response
+import com.example.namnyam.data.remote.dto.CreateRestaurantRequest
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
@@ -90,4 +91,9 @@ interface NamNyamApi {
     suspend fun cancelOwnerOrder(
         @Path("id") orderId: Long
     ): OrderDto
+
+    @POST("restaurants")
+    suspend fun createRestaurant(
+        @Body request: CreateRestaurantRequest
+    ): RestaurantDto
 }

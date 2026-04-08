@@ -113,6 +113,13 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Ресторан владельца не найден" />
+
+                    <Button
+                        android:id="@+id/btnCreateRestaurant"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:text="Создать ресторан" />
                 </LinearLayout>
 
                 <TextView
