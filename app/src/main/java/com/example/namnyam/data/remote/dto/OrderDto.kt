@@ -4,6 +4,8 @@ data class OrderDto(
     val id: Long,
     val userId: Long,
     val restaurantId: Long,
+    val restaurantName: String = "",
+    val restaurantAddress: String = "",
     val courierId: Long? = null,
     val status: String,
     val deliveryAddress: String,

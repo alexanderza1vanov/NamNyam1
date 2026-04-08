@@ -4,16 +4,16 @@ import com.example.namnyam.data.remote.dto.AuthResponseDto
 import com.example.namnyam.data.remote.dto.CreateAddressRequest
 import com.example.namnyam.data.remote.dto.CreateOrderRequest
 import com.example.namnyam.data.remote.dto.CreateProductRequest
+import com.example.namnyam.data.remote.dto.CreateRestaurantRequest
 import com.example.namnyam.data.remote.dto.DeliveryAddressDto
 import com.example.namnyam.data.remote.dto.LoginRequestDto
 import com.example.namnyam.data.remote.dto.OrderDto
 import com.example.namnyam.data.remote.dto.ProductDto
 import com.example.namnyam.data.remote.dto.RegisterRequestDto
 import com.example.namnyam.data.remote.dto.RestaurantDto
-import retrofit2.Response
-import com.example.namnyam.data.remote.dto.CreateRestaurantRequest
 import com.example.namnyam.data.remote.dto.UpdateProductRequest
 import com.example.namnyam.data.remote.dto.UpdateRestaurantRequest
+import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
@@ -131,7 +131,16 @@ interface NamNyamApi {
     suspend fun deleteProduct(
         @Path("id") productId: Long
     ): Response<Unit>
-// COURIER
+
+    // COURIER
+
+    @GET("courier/orders/available")
+    suspend fun getAvailableCourierOrders(): List<OrderDto>
+
+    @PUT("courier/orders/{id}/take")
+    suspend fun takeCourierOrder(
+        @Path("id") orderId: Long
+    ): OrderDto
 
     @GET("courier/orders")
     suspend fun getCourierOrders(): List<OrderDto>

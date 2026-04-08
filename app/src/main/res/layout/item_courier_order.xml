@@ -17,9 +17,9 @@
             android:id="@+id/tvOrderNumber"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textStyle="bold"
+            android:text="Заказ #1"
             android:textSize="18sp"
-            android:text="Заказ №1" />
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/tvStatus"
@@ -29,11 +29,32 @@
             android:text="Статус" />
 
         <TextView
+            android:id="@+id/tvRestaurant"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:text="Ресторан" />
+
+        <TextView
+            android:id="@+id/tvCreatedAt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:text="Дата создания" />
+
+        <TextView
             android:id="@+id/tvAddress"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="6dp"
             android:text="Адрес доставки" />
+
+        <TextView
+            android:id="@+id/tvItems"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:text="Состав заказа" />
 
         <TextView
             android:id="@+id/tvPrice"
@@ -64,8 +85,7 @@
                 android:layout_weight="1"
                 android:text="Не удалось"
                 android:visibility="gone" />
-
         </LinearLayout>
-    </LinearLayout>
 
+    </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

@@ -10,8 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:paddingHorizontal="8dp"
-        android:titleTextColor="@android:color/black"
-        app:navigationIcon="@drawable/ic_arrow_back_24" />
+        android:titleTextColor="@android:color/black"/>
 
     <ScrollView
         android:layout_width="match_parent"

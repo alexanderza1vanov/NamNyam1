@@ -8,12 +8,20 @@ class CourierRepository(context: Context) {
 
     private val api = RetrofitProvider.getApi(context.applicationContext)
 
+    suspend fun getAvailableOrders(): List<OrderDto> {
+        return api.getAvailableCourierOrders()
+    }
+
     suspend fun getCourierOrders(): List<OrderDto> {
         return api.getCourierOrders()
     }
 
     suspend fun getCourierOrderById(orderId: Long): OrderDto {
         return api.getCourierOrderById(orderId)
+    }
+
+    suspend fun takeOrder(orderId: Long): OrderDto {
+        return api.takeCourierOrder(orderId)
     }
 
     suspend fun pickUpOrder(orderId: Long): OrderDto {
