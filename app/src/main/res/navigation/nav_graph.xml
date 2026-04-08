@@ -103,6 +103,7 @@
         android:id="@+id/cartFragment"
         android:name="com.example.namnyam.ui.cart.CartFragment"
         android:label="Cart">
+
         <action
             android:id="@+id/action_cartFragment_to_checkoutFragment"
             app:destination="@id/checkoutFragment" />
@@ -160,6 +161,10 @@
             app:destination="@id/createRestaurantFragment" />
 
         <action
+            android:id="@+id/action_ownerHomeFragment_to_editRestaurantFragment"
+            app:destination="@id/editRestaurantFragment" />
+
+        <action
             android:id="@+id/action_ownerHomeFragment_to_ownerProductsFragment"
             app:destination="@id/ownerProductsFragment" />
     </fragment>
@@ -173,6 +178,7 @@
         android:id="@+id/editRestaurantFragment"
         android:name="com.example.namnyam.ui.owner.EditRestaurantFragment"
         android:label="EditRestaurantFragment" />
+
 
     <fragment
         android:id="@+id/ownerProductsFragment"
